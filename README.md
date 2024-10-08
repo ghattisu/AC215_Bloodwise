@@ -1,92 +1,140 @@
-## Milestone 2 Template
+# Building a RAG System with Vector DB and LLM
+
+In this tutorial we will build a Retrieval-Augmented Generation (RAG) system using a vector database and a Large Language Model (LLM). The system will chunk text documents, create embeddings, stores them in a vector database, and uses them to enhance LLM responses.
+
+**Step 1:**
+<img src="images/llm-rag-flow-1.png"  width="800">
+**Step 2:**
+<img src="images/llm-rag-flow-2.png"  width="800">
+
+
+## Prerequisites
+* Have Docker installed
+* Cloned this repository to your local machine https://github.com/dlops-io/llm-rag
+
+### Setup GCP Service Account
+- To set up a service account, go to the [GCP Console](https://console.cloud.google.com/home/dashboard), search for "Service accounts" in the top search box, or navigate to "IAM & Admin" > "Service accounts" from the top-left menu. 
+- Create a new service account called "llm-service-account." 
+- In "Grant this service account access to project" select:
+    - Storage Admin
+    - Vertex AI User
+- This will create a service account.
+- Click the service account and navigate to the tab "KEYS"
+- Click the button "ADD Key (Create New Key)" and Select "JSON". This will download a private key JSON file to your computer. 
+- Copy this JSON file into the **secrets** folder and rename it to `llm-service-account.json`.
+
+Your folder structure should look like this:
 
 ```
-The files are empty placeholders only. You may adjust this template as appropriate for your project.
-Never commit large data files,trained models, personal API Keys/secrets to GitHub
+   |-llm-rag
+   |-secrets
 ```
 
-#### Project Milestone 2 Organization
+## Run LLM RAG Container
+- Make sure you are inside the `llm-rag` folder and open a terminal at this location
+- Run `sh docker-shell.sh`
 
-```
-├── Readme.md
-├── data # DO NOT UPLOAD DATA TO GITHUB, only .gitkeep to keep the directory or a really small sample
-├── notebooks
-│   └── eda.ipynb
-├── references
-├── reports
-│   └── Statement of Work_Sample.pdf
-└── src
-    ├── datapipeline
-    │   ├── Dockerfile
-    │   ├── Pipfile
-    │   ├── Pipfile.lock
-    │   ├── dataloader.py
-    │   ├── docker-shell.sh
-    │   ├── preprocess_cv.py
-    │   ├── preprocess_rag.py
-    ├── docker-compose.yml
-    └── models
-        ├── Dockerfile
-        ├── docker-shell.sh
-        ├── infer_model.py
-        ├── model_rag.py
-        └── train_model.py
-```
+## Chunk Documents
+Run the cli.py script with the --chunk flag to split your input texts into smaller chunks. To understand more about chunking check out this [visualization](https://ac215-llm-rag.dlops.io/chunkviz). Use Chrome browser for best performance.
 
-# AC215 - Milestone2 - Cheesy App
+**Perform Character splitting:**
 
-**Team Members**
-Pavlos Parmigianopapas, Pavlos Ricottapapas and Pavlos Gouda-papas
+`python cli.py --chunk --chunk_type char-split`
 
-**Group Name**
-The Grate Cheese Group
+**Perform Recursive Character splitting:**
 
-**Project**
-In this project, we aim to develop an AI-powered cheese application. The app will feature visual recognition technology to identify various types of cheese and include a chatbot for answering all kinds of cheese-related questions. Users can simply take a photo of the cheese, and the app will identify it, providing detailed information. Additionally, the chatbot will allow users to ask cheese-related questions. It will be powered by a RAG model and fine-tuned models, making it a specialist in cheese expertise.
+`python cli.py --chunk --chunk_type recursive-split`
 
-### Milestone2 ###
+This will:
+* Read each text file in the input-datasets/books directory
+* Split the text into chunks using the specified method (character-based or recursive)
+* Save the chunks as JSONL files in the outputs directory
 
-In this milestone, we have the components for data management, including versioning, as well as the computer vision and language models.
+## Generate Embeddings
+Generate embeddings for the text chunks:
 
-**Data**
-We gathered a dataset of 100,000 cheese images representing approximately 1,500 different varieties. The dataset, approximately 100GB in size, was collected from the following sources: (1), (2), (3). We have stored it in a private Google Cloud Bucket.
-Additionally, we compiled 250 bibliographical sources on cheese, including books and reports, from sources such as (4) and (5).
+`python cli.py --embed --chunk_type char-split`
 
-**Data Pipeline Containers**
-1. One container processes the 100GB dataset by resizing the images and storing them back to Google Cloud Storage (GCS).
+`python cli.py --embed --chunk_type recursive-split`
 
-	**Input:** Source and destination GCS locations, resizing parameters, and required secrets (provided via Docker).
+This will:
+* Reads the chunk files created in the previous section
+* Uses Vertex AI's text embedding model to generate embeddings for each chunk
+* Saves the chunks with their embeddings as new JSONL files
+* We use Vertex AI `text-embedding-004` model to generate the embeddings
 
-	**Output:** Resized images stored in the specified GCS location.
+## Load Embeddings into Vector Database
+Load the generated embeddings into ChromaDB:
 
-2. Another container prepares data for the RAG model, including tasks such as chunking, embedding, and populating the vector database.
+`python cli.py --load --chunk_type char-split`
 
-## Data Pipeline Overview
+`python cli.py --load --chunk_type recursive-split`
 
-1. **`src/datapipeline/preprocess_cv.py`**
-   This script handles preprocessing on our 100GB dataset. It reduces the image sizes to 128x128 (a parameter that can be changed later) to enable faster iteration during processing. The preprocessed dataset is now reduced to 10GB and stored on GCS.
+This will:
+* Connects to your ChromaDB instance
+* Creates a new collection (or clears an existing one)
+* Loads the embeddings and associated metadata into the collection
 
-2. **`src/datapipeline/preprocess_rag.py`**
-   This script prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
+To view the contents of your Vector Database you can use this [Chroma UI Tool](https://ac215-llm-rag.dlops.io/chromaui). Use Chrome browser for best performance.
 
-3. **`src/datapipeline/Pipfile`**
-   We used the following packages to help with preprocessing:
-   - `special cheese package`
+## Query the Vector Database
+Test querying the vector database:
 
-4. **`src/preprocessing/Dockerfile(s)`**
-   Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
+`python cli.py --query --chunk_type char-split`
+
+`python cli.py --query --chunk_type recursive-split`
+
+This will:
+* Generate an embedding for a sample query
+* Perform similarity searches in the vector database
+* Apply various types of filters on the queries
+
+## Chat with LLM
+Chat with the LLM using the RAG system:
 
 
-## Running Dockerfile
-Instructions for running the Dockerfile can be added here.
-To run Dockerfile - `Instructions here`
+`python cli.py --chat --chunk_type char-split`
 
-**Models container**
-- This container has scripts for model training, rag pipeline and inference
-- Instructions for running the model container - `Instructions here`
+`python cli.py --chat --chunk_type recursive-split`
 
-**Notebooks/Reports**
-This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
+This will:
+* Takes a sample query
+* Retrieves relevant context from the vector database
+* Sends the query and context to the LLM
+* Displays the LLM's response
 
-----
-You may adjust this template as appropriate for your project.
+To test out chat with LLM using RAG, you can use this [Chat Tool](https://ac215-llm-rag.dlops.io/chat). Use Chrome browser for best performance.
+
+## Advanced RAG: Semantic Chunking (Semantic Splitting)
+
+Run the following command to perform chunking -> embedding -> loading the vector db
+
+`python cli.py --chunk --embed --load --chunk_type semantic-split`
+
+This will:
+* Read each text file in the input-datasets/books directory
+* Split the text into chunks using semantic splitting method
+* Save the chunks as JSONL files in the outputs directory
+* Reads each JSONL file of chunks and converts to embeddings and saves them
+* Loads each JSONL file with embeddings into the vector db
+
+## Agents
+
+In this section we will implement and use an AI Agent (Cheese Expert Agent) to perform question answering. AI agents are designed to perform specific tasks, answer questions, and automate processes for users. We will build an cheese agent which can perform the following tasks:
+* Answer a question from a specific book given an author name
+* Answer a question from any book (Similar to our RAG approach above) 
+
+This is the flow of information as compared to the above RAG method:
+<img src="images/llm-rag-flow-3.png"  width="800">
+
+Run the following command to perform
+
+`python cli.py --agent --chunk_type char-split`
+
+This will:
+* Take the user question and pass it to LLM to find the user intent
+* Perform function calling to get all the responses required to answer the question
+* Pass the query and context to the LLM
+* Displays the LLM's response
+
+To test out the Cheese Agent, you can use this [Cheese Agent Tool](https://ac215-llm-rag.dlops.io/agent). Use Chrome browser for best performance.

@@ -1,0 +1,21 @@
+biomarker	definition	normal_range	unit
+WBC	White Blood Cell	4.0 to 10.0	10^9/L.
+LYMp	Lymphocytes percentage, which is a type of white blood cell	20.0 to 40.0	%
+MIDp	Indicates the percentage combined value of the other types of white blood cells not classified as lymphocytes or granulocytes	1.0 to 15.0	%
+NEUTp	Neutrophils are a type of white blood cell (leukocytes); neutrophils percentage	50.0 to 70.0	%
+LYMn	Lymphocytes number are a type of white blood cell	0.6 to 4.1	10^9/L.
+MIDn	Indicates the combined number of other white blood cells not classified as lymphocytes or granulocytes	0.1 to 1.8	10^9/L.
+NEUTn	Neutrophils Number	2.0 to 7.8	10^9/L.
+RBC	Red Blood Cell	3.50 to 5.50	10^12/L
+HGB	Hemoglobin	11.0 to 16.0	g/dL
+HCT	Hematocrit is the proportion, by volume, of the Blood that consists of red blood cells	36.0 to 48.0	%
+MCV	Mean Corpuscular Volume	80.0 to 99.0	fL
+MCH	Mean Corpuscular Hemoglobin is the average amount of haemoglobin in the average red cell	26.0 to 32.0	pg
+MCHC	Mean Corpuscular Hemoglobin Concentration	32.0 to 36.0	g/dL
+RDWSD	Red Blood Cell Distribution Width	37.0 to 54.0	fL
+RDWCV	Red blood cell distribution width	11.5 to 14.5	%
+PLT	Platelet Count	100 to 400	10^9/L
+MPV	Mean Platelet Volume	7.4 to 10.4	fL
+PDW	Red Cell Distribution Width	10.0 to 17.0	%
+PCT	The level of Procalcitonin in the Blood	0.10 to 0.28	%
+PLCR	Platelet Large Cell Ratio	13.0 to 43.0	%
