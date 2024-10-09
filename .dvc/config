@@ -1,0 +1,4 @@
+[core]
+    remote = gs_remote
+['remote "gs_remote"']
+    url = gs://ac215-test-gcs
