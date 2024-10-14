@@ -1,9 +1,4 @@
-## Milestone 2 Template
-
-```
-The files are empty placeholders only. You may adjust this template as appropriate for your project.
-Never commit large data files,trained models, personal API Keys/secrets to GitHub
-```
+## Milestone 2
 
 #### Project Milestone 2 Organization
 
@@ -33,22 +28,23 @@ Never commit large data files,trained models, personal API Keys/secrets to GitHu
         └── train_model.py
 ```
 
-# AC215 - Milestone2 - Cheesy App
+# AC215 - Milestone2 - Bloodwise App
 
 **Team Members**
-Pavlos Parmigianopapas, Pavlos Ricottapapas and Pavlos Gouda-papas
+Lucy Chen, Surabhi Ghatti, Siavash Raissi, Xingli Yu
 
 **Group Name**
-The Grate Cheese Group
+Bloodwise
 
 **Project**
-In this project, we aim to develop an AI-powered cheese application. The app will feature visual recognition technology to identify various types of cheese and include a chatbot for answering all kinds of cheese-related questions. Users can simply take a photo of the cheese, and the app will identify it, providing detailed information. Additionally, the chatbot will allow users to ask cheese-related questions. It will be powered by a RAG model and fine-tuned models, making it a specialist in cheese expertise.
+The goal of this project is to develop an application that provides users with easy explanations of lab test results based on a symptom summary, and potential diagnoses based on values for initial understanding before consultation with physicians. The application will have a chatbot interface using a large language model (LLM) built on retrieval augmented generation (RAG) with accurate medical information.
 
 ### Milestone2 ###
 
-In this milestone, we have the components for data management, including versioning, as well as the computer vision and language models.
+In this milestone, we have the components for data management, including versioning, as well as the data scraping and cleaning needed to build out or RAG Pipeline.
 
 **Data**
+We compiled data from 
 We gathered a dataset of 100,000 cheese images representing approximately 1,500 different varieties. The dataset, approximately 100GB in size, was collected from the following sources: (1), (2), (3). We have stored it in a private Google Cloud Bucket.
 Additionally, we compiled 250 bibliographical sources on cheese, including books and reports, from sources such as (4) and (5).
 
