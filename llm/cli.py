@@ -6,6 +6,7 @@ import time
 import glob
 import hashlib
 import chromadb
+from chromadb.config import Settings
 import pandas as pd
 
 # Vertex AI
@@ -18,7 +19,6 @@ from langchain.text_splitter import CharacterTextSplitter
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 #from langchain_experimental.text_splitter import SemanticChunker
 from semantic_splitter import SemanticChunker
-import agent_tools
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
@@ -29,8 +29,11 @@ GENERATIVE_MODEL = "gemini-1.5-flash-001"
 INPUT_FOLDER = "input-datasets"
 OUTPUT_FOLDER = "outputs"
 # CHROMADB_HOST = "llm-rag-chromadb"
-CHROMADB_HOST = "host.docker.internal"
-CHROMADB_PORT = 8000
+# CHROMADB_HOST = "host.docker.internal"
+CHROMADB_HOST = "https://chroma-534883346897.us-central1.run.app"
+# CHROMADB_PORT = 8000
+CHROMADB_PORT = 443
+
 
 vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION)
 # https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api#python
@@ -255,7 +258,11 @@ def load(method="char-split"):
 	print("load()")
 
 	# Connect to chroma DB
-	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	# client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT, ssl=True,
+								settings=Settings(chroma_client_auth_provider="chromadb.auth.token_authn.TokenAuthClientProvider",
+												chroma_client_auth_credentials="wZVg5QqQCJaQ1EZkrRdUTVKkrpQGCu2D",
+												anonymized_telemetry=False))
 
 	# Get a collection object from an existing collection, by name. If it doesn't exist, create it.
 	collection_name = f"{method}-collection"
@@ -292,7 +299,11 @@ def query(method="char-split"):
 	print("load()")
 
 	# Connect to chroma DB
-	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	# client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT, ssl=True,
+								settings=Settings(chroma_client_auth_provider="chromadb.auth.token_authn.TokenAuthClientProvider",
+												chroma_client_auth_credentials="wZVg5QqQCJaQ1EZkrRdUTVKkrpQGCu2D",
+												anonymized_telemetry=False))
 
 	# Get a collection object from an existing collection, by name. If it doesn't exist, create it.
 	collection_name = f"{method}-collection"
@@ -336,7 +347,11 @@ def chat(method="char-split"):
 	print("chat()")
 
 	# Connect to chroma DB
-	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	# client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT, ssl=True,
+								settings=Settings(chroma_client_auth_provider="chromadb.auth.token_authn.TokenAuthClientProvider",
+												chroma_client_auth_credentials="wZVg5QqQCJaQ1EZkrRdUTVKkrpQGCu2D",
+												anonymized_telemetry=False))
 	# Get a collection object from an existing collection, by name. If it doesn't exist, create it.
 	collection_name = f"{method}-collection"
 
@@ -371,16 +386,27 @@ def chat(method="char-split"):
 	print("LLM Response:", generated_text)
 
 
-def get_model_response(prompt, method="semantic-split"):
+def connect_to_db(method="semantic-split"):
+    client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT, ssl=True,
+								settings=Settings(chroma_client_auth_provider="chromadb.auth.token_authn.TokenAuthClientProvider",
+												chroma_client_auth_credentials="wZVg5QqQCJaQ1EZkrRdUTVKkrpQGCu2D",
+												anonymized_telemetry=False))
+    # Get a collection object from an existing collection, by name. If it doesn't exist, create it.
+    collection_name = f"{method}-collection"
+ 
+    # Get the collection
+    collection = client.get_collection(name=collection_name)
+    return collection
+ 
+    
 
-   # Connect to chroma DB
-	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
-	# Get a collection object from an existing collection, by name. If it doesn't exist, create it.
-	collection_name = f"{method}-collection"
+def get_model_response(prompt, collection):
+   	# Connect to chroma DB
+	# client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
 
 	query_embedding = generate_query_embedding(prompt)
-	# Get the collection
-	collection = client.get_collection(name=collection_name)
+	# # Get the collection
+	# collection = client.get_collection(name=collection_name)
 
 	# Query based on embedding value 
 	results = collection.query(
@@ -406,7 +432,11 @@ def get_model_response(prompt, method="semantic-split"):
 
 def get_all_data(method="semantic-split"):
 	# Connect to chroma DB
-	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	# client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT, ssl=True,
+								settings=Settings(chroma_client_auth_provider="chromadb.auth.token_authn.TokenAuthClientProvider",
+												chroma_client_auth_credentials="wZVg5QqQCJaQ1EZkrRdUTVKkrpQGCu2D",
+												anonymized_telemetry=False))
 	collection_name = f"{method}-collection"
 
 	collection = client.get_collection(name=collection_name)
@@ -422,7 +452,11 @@ def get(method="char-split"):
 	print("get()")
 
 	# Connect to chroma DB
-	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	# client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
+	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT, ssl=True,
+								settings=Settings(chroma_client_auth_provider="chromadb.auth.token_authn.TokenAuthClientProvider",
+												chroma_client_auth_credentials="wZVg5QqQCJaQ1EZkrRdUTVKkrpQGCu2D",
+												anonymized_telemetry=False))
 	# Get a collection object from an existing collection, by name. If it doesn't exist, create it.
 	collection_name = f"{method}-collection"
 
@@ -436,59 +470,6 @@ def get(method="char-split"):
 	)
 	print("\n\nResults:", results)
 
-
-
-# def agent(method="char-split"):
-# 	print("agent()")
-
-# 	# Connect to chroma DB
-# 	client = chromadb.HttpClient(host=CHROMADB_HOST, port=CHROMADB_PORT)
-# 	# Get a collection object from an existing collection, by name. If it doesn't exist, create it.
-# 	collection_name = f"{method}-collection"
-# 	# Get the collection
-# 	collection = client.get_collection(name=collection_name)
-
-# 	# User prompt
-# 	user_prompt_content = Content(
-#     	role="user",
-# 		parts=[
-# 			Part.from_text("Describe where cheese making is important in Pavlos's book?"),
-# 		],
-# 	)
-	
-# 	# Step 1: Prompt LLM to find the tool(s) to execute to find the relevant chunks in vector db
-# 	print("user_prompt_content: ",user_prompt_content)
-# 	response = generative_model.generate_content(
-# 		user_prompt_content,
-# 		generation_config=GenerationConfig(temperature=0),  # Configuration settings
-# 		tools=[agent_tools.cheese_expert_tool],  # Tools available to the model
-# 		tool_config=ToolConfig(
-# 			function_calling_config=ToolConfig.FunctionCallingConfig(
-# 				# ANY mode forces the model to predict only function calls
-# 				mode=ToolConfig.FunctionCallingConfig.Mode.ANY,
-# 		))
-# 	)
-# 	print("LLM Response:", response)
-
-# 	# Step 2: Execute the function and send chunks back to LLM to answer get the final response
-# 	function_calls = response.candidates[0].function_calls
-# 	print("Function calls:")
-# 	function_responses = agent_tools.execute_function_calls(function_calls,collection,embed_func=generate_query_embedding)
-# 	if len(function_responses) == 0:
-# 		print("Function calls did not result in any responses...")
-# 	else:
-# 		# Call LLM with retrieved responses
-# 		response = generative_model.generate_content(
-# 			[
-# 				user_prompt_content,  # User prompt
-# 				response.candidates[0].content,  # Function call response
-# 				Content(
-# 					parts=function_responses
-# 				),
-# 			],
-# 			tools=[agent_tools.cheese_expert_tool],
-# 		)
-# 		print("LLM Response:", response)
 
 
 def main(args=None):
@@ -511,9 +492,6 @@ def main(args=None):
 	
 	if args.get:
 		get(method=args.chunk_type)
-	
-	# if args.agent:
-	# 	agent(method=args.chunk_type)
 
 
 if __name__ == "__main__":

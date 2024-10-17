@@ -7,8 +7,8 @@ services:
         image: llm-rag-cli
         container_name: llm-rag-cli
         volumes:
-            - ../secrets:/secrets
-            - ../AC215_Bloodwise:/app
+            - ../../secrets:/secrets
+            - ../llm:/app
         environment:
             GOOGLE_APPLICATION_CREDENTIALS: $GOOGLE_APPLICATION_CREDENTIALS
             GCP_PROJECT: $GCP_PROJECT

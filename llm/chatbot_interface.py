@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from cli import get_model_response, get_all_data
+from cli import get_model_response, get_all_data, connect_to_db
 
 st.title("Chatbot Interface")
 
@@ -26,16 +26,17 @@ with tab2:
     for i in edited_df.columns[edited_df.loc[0] != ""]:
         blood_test_input_prompt += f"{i} is {biomarker_dictionary["definition"][i]}, the normal range for it is {biomarker_dictionary["normal_range"][i]}, and the patient has a value of {edited_df.loc[0, i]}. "
 
-
     instruction = """Based on the blood test results, provide a description of the patient's health condition, 
     give detailed explaning on what each value means, and give recommendations for further actions."""
+    
+    collection = connect_to_db()
 
     if st.button("Save and begin Chat"):
         st.session_state.messages = []
         if(blood_test_input_prompt != ""):
             prompt = f"{blood_test_input_prompt} {instruction}"
             st.session_state.messages.append({"role": "assistant", "content": prompt})
-            response = get_model_response(prompt)
+            response = get_model_response(prompt, collection)
             
             # Display assistant response in chat message container
             with st.chat_message("assistant"):
@@ -59,7 +60,7 @@ with tab2:
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": prompt})
 
-        response = get_model_response(prompt)
+        response = get_model_response(prompt, collection)
         # response = f"echo: {prompt}"
         # Display assistant response in chat message container
         with st.chat_message("assistant"):
