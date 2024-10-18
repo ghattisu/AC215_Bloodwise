@@ -1,8 +1,8 @@
 # Fine-tuning an LLM
 
 In this container, we will be fine-tuning the gemini-1.5-flash-002 model from Vertex AI! It will cover:
-- dataset creation
-- fine-tuning Gemini
+- Dataset creation
+- Fine-tuning Gemini
 
 ## Prerequisites
 * Have Docker installed
