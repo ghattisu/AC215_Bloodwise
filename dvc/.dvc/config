@@ -1,4 +1,4 @@
 [core]
-    remote = dataset
-['remote "dataset"']
+    remote = input-datasets
+['remote "input-datasets"']
     url = gs://blooswise-data-versioning/dvc_store

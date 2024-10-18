@@ -57,6 +57,11 @@ import pandas as pd
 biomarkers_glossary_df = pd.DataFrame(biomarkers_glossary.items(), columns=['Topic', 'Content'])
 biomarkers_glossary_df.to_csv('biomarkers_glossary.csv', index=False)
 
+#check if the directory exists
+#directory = 'biomarkers_glossary'
+#if not os.path.exists(directory):
+#    os.makedirs(directory)
+
 # make each entry into a txt file
 for key, value in biomarkers_glossary.items():
     with open(f'biomarkers_glossary/{key}.txt', 'w') as file:

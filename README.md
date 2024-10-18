@@ -1,88 +1,185 @@
 ## Milestone 2
 
+
 #### Project Milestone 2 Organization
+
 
 ```
 ├── Readme.md
-├── data # DO NOT UPLOAD DATA TO GITHUB, only .gitkeep to keep the directory or a really small sample
-├── notebooks
-│   └── eda.ipynb
-├── references
-├── reports
-│   └── Statement of Work_Sample.pdf
-└── src
-    ├── datapipeline
-    │   ├── Dockerfile
-    │   ├── Pipfile
-    │   ├── Pipfile.lock
-    │   ├── dataloader.py
-    │   ├── docker-shell.sh
-    │   ├── preprocess_cv.py
-    │   ├── preprocess_rag.py
-    ├── docker-compose.yml
-    └── models
-        ├── Dockerfile
-        ├── docker-shell.sh
-        ├── infer_model.py
-        ├── model_rag.py
-        └── train_model.py
+├── dvc
+│   ├── .dvc
+│   │   └── config
+│   ├── .dvcignore
+│   ├── dataset.dvc
+│   ├── docker-entrypoint.sh
+│   ├── docker-shell.sh
+│   ├── Dockerfile
+│   ├── Pipfile
+│   └── Pipfile.lock
+├── fine-tuning
+├── fine-tuning-sg
+│   ├── env.dev
+│   ├── dataset-creator
+│   │   ├── cli.py
+│   │   ├── docker-entrypoint.sh
+│   │   ├── docker-shell.sh
+│   │   ├── Dockerfile
+│   │   ├── Pipfile
+│   │   ├── Pipfile.lock
+│   │   └── data
+│   │       ├── .gitkeep
+│   └── gemini-finetuner
+│       ├── cli.py
+│       ├── docker-entrypoint.sh
+│       ├── docker-shell.sh
+│       ├── Dockerfile
+│       ├── Pipfile
+│       └── Pipfile.lock
+├── llm
+│   ├── docker-volumes
+│   ├── input-datasets
+│   ├── biomarker_dictionary.csv
+│   ├── chatbot_interface.py
+│   ├── cli.py
+│   ├── docker-compose.yml
+│   ├── docker-entrypoint.sh
+│   ├── docker-shell.sh
+│   ├── Dockerfile
+│   ├── Pipfile
+│   ├── Pipfile.lock
+│   ├── README.md
+│   └── semantic_splitter.py
+└── scraping
+    ├── biomarkers_glossary
+    ├── biomarkers_glossary.csv
+    ├── Dockerfile
+    ├── Pipfile
+    ├── Pipfile.lock
+    ├── docker-entrypoint.sh
+    ├── docker-shell.sh
+    ├── scrape_biomarkers.ipynb
+    ├── README.md
+    └── cli.py
 ```
 
+
 # AC215 - Milestone2 - Bloodwise App
+
 
 **Team Members**
 Lucy Chen, Surabhi Ghatti, Siavash Raissi, Xingli Yu
 
+
 **Group Name**
 Bloodwise
 
+
 **Project**
-The goal of this project is to develop an application that provides users with easy explanations of lab test results based on a symptom summary, and potential diagnoses based on values for initial understanding before consultation with physicians. The application will have a chatbot interface using a large language model (LLM) built on retrieval augmented generation (RAG) with accurate medical information.
+The goal of this project is to develop an application that provides users with easy explanations of lab test results based on the provided results and a symptom summary. The app will suggest what the results could mean, and if abnormal, suggest lifestyle changes, specifying to consult with a physician as well. The application will have a chatbot interface using a large language model (LLM) built on retrieval augmented generation (RAG) with accurate medical information.
+
 
 ### Milestone2 ###
 
-In this milestone, we have the components for data management, including versioning, as well as the data scraping and cleaning needed to build out or RAG Pipeline.
+
+In this milestone, we have the components for data management, including versioning, as well as the data scraping and cleaning needed to build out our RAG Pipeline. We have also attempted to fine-tune our LLM using dataset generation. Within the RAG container, we also launch our initial UI for our application.
+
 
 **Data**
-We compiled data from 
-We gathered a dataset of 100,000 cheese images representing approximately 1,500 different varieties. The dataset, approximately 100GB in size, was collected from the following sources: (1), (2), (3). We have stored it in a private Google Cloud Bucket.
-Additionally, we compiled 250 bibliographical sources on cheese, including books and reports, from sources such as (4) and (5).
+We scrapped several web pages from the Cleveland Clinic and Docus.AI that contain information about biomarkers and complete blood count (CBC). For each resource, we took the main glossary page to collect links to individual biomarker pages.
+
 
 **Data Pipeline Containers**
-1. One container processes the 100GB dataset by resizing the images and storing them back to Google Cloud Storage (GCS).
+1. Scraping: processes the scrapped webpages and saves them to a CSV file as well as individual text files to be used for the RAG pipeline.
 
-	**Input:** Source and destination GCS locations, resizing parameters, and required secrets (provided via Docker).
 
-	**Output:** Resized images stored in the specified GCS location.
+	  **Input:** None
+	
+	
+	  **Output:** CSV and txt files of scrapped webpages to be used for LLM
 
-2. Another container prepares data for the RAG model, including tasks such as chunking, embedding, and populating the vector database.
+
+2. Fine-tuning: generates a question/answer dataset to be used to finetune the Gemini Model 
+
+
+	  **Input:** Source and destination GCS locations, Vertex AI-service account
+	
+	
+	  **Output:** Fine-tuned Gemini model deployed to an endpoint
+
+
+3. LLM: this prepares the data generated from scraping for the RAG model, including tasks such as chunking, embedding, and populating the vector database. It then calls on the fine-tuned model and deploys the application interface.
+ 
+	  **Input:** Scraped txt files and csv file, Vertex AI-service account
+	
+	
+	  **Output:** Streamlit app with RAG fine-tuned LLM
+
+
+4. DVC: sets-up and runs DVC to ensure proper version control of the data being used. 
+
+   	  **Input:** Source and destination GCS locations, Vertex AI-service account
+	
+	
+	  **Output:** Fine-tuned Gemini model deployed to an endpoint
+
+
+
 
 ## Data Pipeline Overview
 
-1. **`src/datapipeline/preprocess_cv.py`**
-   This script handles preprocessing on our 100GB dataset. It reduces the image sizes to 128x128 (a parameter that can be changed later) to enable faster iteration during processing. The preprocessed dataset is now reduced to 10GB and stored on GCS.
 
-2. **`src/datapipeline/preprocess_rag.py`**
-   This script prepares the necessary data for setting up our vector database. It performs chunking, embedding, and loads the data into a vector database (ChromaDB).
+Here is a visual of our data pipeline: 
 
-3. **`src/datapipeline/Pipfile`**
-   We used the following packages to help with preprocessing:
-   - `special cheese package`
-
-4. **`src/preprocessing/Dockerfile(s)`**
-   Our Dockerfiles follow standard conventions, with the exception of some specific modifications described in the Dockerfile/described below.
+Since each section is containerized, please access the readme’s of each subfolder to run each container:
+1. [Scraping](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/scraping)
+2. [Fine-Tuning](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/fine-tuning-sg)
+3. [LLM-RAG Deployment](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/llm)
+4. [DVC](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/dvc)
 
 
-## Running Dockerfile
-Instructions for running the Dockerfile can be added here.
-To run Dockerfile - `Instructions here`
+### Resulting code options for each Container
 
-**Models container**
-- This container has scripts for model training, rag pipeline and inference
-- Instructions for running the model container - `Instructions here`
 
-**Notebooks/Reports**
-This folder contains code that is not part of container - for e.g: Application mockup, EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
+**Scraping**
+```
+python cli.py
 
-----
-You may adjust this template as appropriate for your project.
+```
+
+
+**Fine-tuning LLM**
+```
+*Dataset generation:*
+
+
+python cli.py --generate
+python cli.py --prepare
+python cli.py --upload
+
+
+*Gemini Finetuning:*
+
+
+python cli.py --train
+python cli.py --chat
+
+```
+
+
+**RAG and Deployment**
+```
+python cli.py --chunk
+python cli.py --embed
+python cli.py --load
+
+```
+
+
+**DVC**
+```
+dvc init
+dvc remote add -d dataset gs://blooswise-data-versioning/dvc_store
+dvc add dataset
+dvc push
+
+```
