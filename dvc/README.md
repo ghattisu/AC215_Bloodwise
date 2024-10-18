@@ -117,10 +117,10 @@ Run this outside the container.
 - Push changes to github
 
 
-### Download Data to view version
-In this Step we will use Colab to view the new version of the dataset
-- Open [Colab Notebook](https://colab.research.google.com/drive/1RRQ1SlHq5lKK76R8LoQdi5LjCnND3jTq?usp=sharing)
-- Follow instruction in the Colab Notebook to view `dataset_v21`
+### Get (different version) data using DVC 
+Run this outside the container 
+- To get the most recent version of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev starter`
+- To get the specific version (previous version) of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev dataset_v1`
 
 ## Docker Cleanup
 To make sure we do not have any running containers and clear up an unused images
