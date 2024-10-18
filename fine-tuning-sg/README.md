@@ -184,9 +184,16 @@ Hi! I just got my blood test results back and it shows that my LDL level is 160 
 
 Fine-tuned LLM Response: 
 
-An LDL cholesterol level of 160 mg/dL is considered **high** and puts you at an increased risk for heart disease.  The ideal LDL level is below 100 mg/dL.  A level between 100-129 mg/dL is considered near optimal/borderline high, and anything above 130 mg/dL is high.  At 160 mg/dL you are significantly above the healthy range.
+An LDL cholesterol level of 160 mg/dL is considered high, placing you at increased risk for heart disease. Ideally, LDL cholesterol should be below 100 mg/dL. Levels above 160 mg/dL significantly increase your risk of developing atherosclerosis (plaque buildup in arteries), which can lead to heart attack or stroke.
 
-It's crucial to talk to your doctor about this. They can discuss lifestyle changes you can make and whether medication is necessary to lower your LDL cholesterol and reduce your risk of heart disease.  They may also want to order additional tests to assess your overall cardiovascular health.  Don't attempt to self-treat.
+Do not attempt to self-treat. This result requires discussion with your doctor or a healthcare professional. They will:
+
+- Evaluate your overall cardiovascular risk: Your LDL level is one piece of the puzzle. Other factors like age, family history, blood pressure, HDL cholesterol, triglycerides, smoking status, and existing health conditions are also crucial.
+- Recommend lifestyle modifications: This may include a heart-healthy diet lower in saturated and trans fats, increased physical activity, and weight management if needed.
+- Discuss medication options: Depending on your overall risk profile and response to lifestyle changes, your doctor might recommend medication, such as statins, to lower your LDL cholesterol.
+
+It's important to get personalized advice and develop a plan tailored to your individual circumstances. Schedule an appointment with your doctor to discuss these results.
+
 ```
 
 If you go to [Vertex AI Tuning](https://console.cloud.google.com/vertex-ai/studio/tuning) you can view all the detail from training.
