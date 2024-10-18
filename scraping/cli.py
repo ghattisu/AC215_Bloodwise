@@ -66,6 +66,7 @@ def scrape():
 
     # make each entry into a txt file
     for key, value in biomarkers_glossary.items():
+        print(key)
         with open(f'input-datasets/{key}.txt', 'w') as file:
             file.write(value)
 

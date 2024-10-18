@@ -52,7 +52,6 @@ In order for the DVC container to connect to our GCS Bucket open the file `docke
 export GCS_BUCKET_NAME="blooswise-data-versioning"
 export GCP_PROJECT="bloodwise-ai"
 export GCP_ZONE="us-central1-a"
-
 ```
 ### Note: Addition of `docker-entrypoint.sh`
 Note that we have added a new file called `docker-entrypoint.sh` to our development flow. A `docker-entrypoint.sh` is used to simplify some task when running containers such as:
@@ -83,12 +82,45 @@ In this step we create a data registry using DVC
 `dvc remote add -d dataset gs://blooswise-data-versioning/dvc_store`
 
 #### Add the dataset to registry
-`dvc add dataset`
+`dvc add datasets`
 
 #### Push to Remote Registry
 `dvc push`
 
 You can go to your GCS Bucket folder `dvs_store` to view the tracking files
+
+
+#### Update Git to track DVC 
+Run this outside the container. 
+- First run git status `git status`
+- Add changes `git add .`
+- Commit changes `git commit -m '...'`
+- Add a dataset tag `git tag -a 'dataset_v1' -m 'tag dataset'`
+- Push changes to github
+
+## Make changes to data
+
+### Upload images
+- Upload a few more images to the `images` folder in your bucket (We are simulating some change in data)
+
+#### Add the dataset (changes) to registry
+`dvc add datasets`
+
+#### Push to Remote Registry
+`dvc push`
+
+#### Update Git to track DVC changes (again remember this should be done outside the container)
+- First run git status `git status`
+- Add changes `git add .`
+- Commit changes `git commit -m '...'`
+- Add a dataset tag `git tag -a 'dataset_v2' -m 'tag dataset'`
+- Push changes to github
+
+
+### Download Data to view version
+In this Step we will use Colab to view the new version of the dataset
+- Open [Colab Notebook](https://colab.research.google.com/drive/1RRQ1SlHq5lKK76R8LoQdi5LjCnND3jTq?usp=sharing)
+- Follow instruction in the Colab Notebook to view `dataset_v21`
 
 ## Docker Cleanup
 To make sure we do not have any running containers and clear up an unused images
