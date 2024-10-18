@@ -1,16 +1,10 @@
 # Building a RAG System with Vector DB and LLM
 
-In this tutorial we will build a Retrieval-Augmented Generation (RAG) system using a vector database and a Large Language Model (LLM). The system will chunk text documents, create embeddings, stores them in a vector database, and uses them to enhance LLM responses.
-
-**Step 1:**
-<img src="images/llm-rag-flow-1.png"  width="800">
-**Step 2:**
-<img src="images/llm-rag-flow-2.png"  width="800">
-
+In this container, we prepared a set of text documents for the RAG knowledge base. We will chunk the documents, create embeddings, store the embeddings in a vector database, and use them to enhance LLM responses to answer blood test interpreation questions. We fine-tuned a gemini model (in the fine-tuning-sg container) with sets of question-answer pairs related to blood test interpreations and used the fine-tuned model here. We also created a baseline dashboard for entering blood test results and chatting with the model.  
 
 ## Prerequisites
 * Have Docker installed
-* Cloned this repository to your local machine https://github.com/dlops-io/llm-rag
+* Cloned this repository to your local machine https://github.com/ghattisu/AC215_Bloodwise
 
 ### Setup GCP Service Account
 - To set up a service account, go to the [GCP Console](https://console.cloud.google.com/home/dashboard), search for "Service accounts" in the top search box, or navigate to "IAM & Admin" > "Service accounts" from the top-left menu. 
@@ -26,36 +20,28 @@ In this tutorial we will build a Retrieval-Augmented Generation (RAG) system usi
 Your folder structure should look like this:
 
 ```
-   |-llm-rag
-   |-secrets
+    |-AC215_BLOODWISE
+        |-llm
+        |-fine-tuning-sg
+        |-scraping
+        |-dvc
+        |-secrets
 ```
 
 ## Run LLM RAG Container
-- Make sure you are inside the `llm-rag` folder and open a terminal at this location
+- Make sure you are inside the `llm` folder and open a terminal at this location
 - Run `sh docker-shell.sh`
 
 ## Chunk Documents
-Run the cli.py script with the --chunk flag to split your input texts into smaller chunks. To understand more about chunking check out this [visualization](https://ac215-llm-rag.dlops.io/chunkviz). Use Chrome browser for best performance.
-
-**Perform Character splitting:**
-
-`python cli.py --chunk --chunk_type char-split`
-
-**Perform Recursive Character splitting:**
-
-`python cli.py --chunk --chunk_type recursive-split`
+`python cli.py --chunk`
 
 This will:
 * Read each text file in the input-datasets/books directory
-* Split the text into chunks using the specified method (character-based or recursive)
+* Split the text into chunks with semantic-splitting
 * Save the chunks as JSONL files in the outputs directory
 
 ## Generate Embeddings
-Generate embeddings for the text chunks:
-
-`python cli.py --embed --chunk_type char-split`
-
-`python cli.py --embed --chunk_type recursive-split`
+`python cli.py --embed`
 
 This will:
 * Reads the chunk files created in the previous section
@@ -64,77 +50,23 @@ This will:
 * We use Vertex AI `text-embedding-004` model to generate the embeddings
 
 ## Load Embeddings into Vector Database
-Load the generated embeddings into ChromaDB:
-
-`python cli.py --load --chunk_type char-split`
-
-`python cli.py --load --chunk_type recursive-split`
+`python cli.py --load`
 
 This will:
 * Connects to your ChromaDB instance
 * Creates a new collection (or clears an existing one)
 * Loads the embeddings and associated metadata into the collection
 
-To view the contents of your Vector Database you can use this [Chroma UI Tool](https://ac215-llm-rag.dlops.io/chromaui). Use Chrome browser for best performance.
+## (shortcut) chunking -> embedding -> loading the vector db
+`python cli.py --chunk --embed --load`
 
-## Query the Vector Database
-Test querying the vector database:
+## Open the chatbot interface
+`streamlit run chatbot_interface.py`
+Open http://localhost:8501/ in a web browser to view the chatbot_interface.
 
-`python cli.py --query --chunk_type char-split`
-
-`python cli.py --query --chunk_type recursive-split`
-
-This will:
-* Generate an embedding for a sample query
-* Perform similarity searches in the vector database
-* Apply various types of filters on the queries
-
-## Chat with LLM
-Chat with the LLM using the RAG system:
-
-
-`python cli.py --chat --chunk_type char-split`
-
-`python cli.py --chat --chunk_type recursive-split`
-
-This will:
-* Takes a sample query
-* Retrieves relevant context from the vector database
-* Sends the query and context to the LLM
-* Displays the LLM's response
-
-To test out chat with LLM using RAG, you can use this [Chat Tool](https://ac215-llm-rag.dlops.io/chat). Use Chrome browser for best performance.
-
-## Advanced RAG: Semantic Chunking (Semantic Splitting)
-
-Run the following command to perform chunking -> embedding -> loading the vector db
-
-`python cli.py --chunk --embed --load --chunk_type semantic-split`
-
-This will:
-* Read each text file in the input-datasets/books directory
-* Split the text into chunks using semantic splitting method
-* Save the chunks as JSONL files in the outputs directory
-* Reads each JSONL file of chunks and converts to embeddings and saves them
-* Loads each JSONL file with embeddings into the vector db
-
-## Agents
-
-In this section we will implement and use an AI Agent (Cheese Expert Agent) to perform question answering. AI agents are designed to perform specific tasks, answer questions, and automate processes for users. We will build an cheese agent which can perform the following tasks:
-* Answer a question from a specific book given an author name
-* Answer a question from any book (Similar to our RAG approach above) 
-
-This is the flow of information as compared to the above RAG method:
-<img src="images/llm-rag-flow-3.png"  width="800">
-
-Run the following command to perform
-
-`python cli.py --agent --chunk_type char-split`
-
-This will:
-* Take the user question and pass it to LLM to find the user intent
-* Perform function calling to get all the responses required to answer the question
-* Pass the query and context to the LLM
-* Displays the LLM's response
-
-To test out the Cheese Agent, you can use this [Cheese Agent Tool](https://ac215-llm-rag.dlops.io/agent). Use Chrome browser for best performance.
+The dashboard contains two tabs: Vector Database, Chatbot
+* The vector database tab contains a table displaying all records in the semantic-splitting-collection 
+* The chatbot interface contains two elements: 
+    * an empty table that allows users to enter blood test results (can leave elements blank). Click "save and begin chat" to
+    ask the LLM to interpret the data entered.
+    * a chat box to enter questions related to blood test

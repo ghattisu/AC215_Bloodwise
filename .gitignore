@@ -1,5 +1,4 @@
-fine-tuning-sg/dataset-creator/data/*.
-secrets/
-*.txt
-*.csv
-*.jsonl
+fine-tuning-sg/dataset-creator/data
+secrets
+llm/outputs
+llm/docker-volumes
