@@ -10,7 +10,7 @@ import glob
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCP_LOCATION = "us-central1"
 OUTPUT_FOLDER = "input-datasets"
-GCS_BUCKET_NAME = "bloodwise-rag-knowledge-base"
+GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
 
 def scrape():
     ## docus
@@ -66,7 +66,6 @@ def scrape():
 
     # make each entry into a txt file
     for key, value in biomarkers_glossary.items():
-        print(key)
         with open(f'input-datasets/{key}.txt', 'w') as file:
             file.write(value)
 

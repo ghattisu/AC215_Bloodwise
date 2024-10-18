@@ -3,3 +3,6 @@ secrets
 llm/outputs
 llm/docker-volumes
 .DS_Store
+*.txt
+*.csv
+*.jsonl
