@@ -199,7 +199,7 @@ It's important to get personalized advice and develop a plan tailored to your in
 If you go to [Vertex AI Tuning](https://console.cloud.google.com/vertex-ai/studio/tuning) you can view all the detail from training.
 
 #### Decision for Choices of Fine-tuning
-We were debating between using a pre-composed health dataset which had vitals and some blood test information vs creating our own dataset to fine-tune. Ultimatley, we chose to create our own-dataset since the pre-composes health dataset did not entirley fit the purpose for our application. We only experimented with Gemini due to a reccomendation from our Mentor, as we all prior experince using Vertex AI through GCP.
+We were debating between using a pre-composed health dataset which had vitals and some blood test information vs creating our own dataset to fine-tune. Ultimately, we chose to create our own dataset since the pre-composed dataset did not contain information specific enough on understanding blood test results and providing lifestyle changes. This is why we decided to create our own dataset. We only experimented with Gemini due to a recommendation from our Mentor, as we all prior experience using Vertex AI through GCP.
 
 Training Monitor:
 <img src="images/training-1.png"  width="800">
