@@ -15,10 +15,11 @@
 │   ├── docker-shell.sh
 │   ├── Dockerfile
 │   ├── Pipfile
+│   ├── Readme.md
 │   └── Pipfile.lock
-├── fine-tuning
 ├── fine-tuning-sg
 │   ├── env.dev
+│   ├── Readme.md
 │   ├── dataset-creator
 │   │   ├── cli.py
 │   │   ├── docker-entrypoint.sh
@@ -117,10 +118,14 @@ We scrapped several web pages from the Cleveland Clinic and Docus.AI that contai
 
 4. DVC: sets-up and runs DVC to ensure proper version control of the data being used. 
 
-   	  **Input:** Source and destination GCS locations, Vertex AI-service account
+   	  **Input:** The actual input datasets for LLM and Fine-tuning
 	
 	
-	  **Output:** Fine-tuned Gemini model deployed to an endpoint
+	  **Output:** A small text files (`.dvc`) that contain: 
+- Path to the actual data in the DVC cache, 
+- MD5 hash of the data
+- Information about how to reproduce the data
+
 
 
 
