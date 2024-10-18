@@ -32,6 +32,12 @@ Your folder structure should look like this:
 - Make sure you are inside the `llm` folder and open a terminal at this location
 - Run `sh docker-shell.sh`
 
+## Download Documents
+`python cli.py --download`
+
+This will:
+* Download txt files of the blood test related documents from GCS bucket
+
 ## Chunk Documents
 `python cli.py --chunk`
 
