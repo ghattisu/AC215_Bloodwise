@@ -123,6 +123,10 @@ Run this outside the container
 - To get the most recent version of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev starter`
 - To get the specific version (previous version) of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev dataset_v1`
 
+When you enter `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev starter` you will be asked to enter your github username and password. If you get the following error ‘ERROR: failed to get 'dvc/datasets' - SCM error: Failed to clone repo 'https://github.com/ghattisu/AC215_Bloodwise.git' to '/tmp/tmpg0rguocjdvc-clone': No valid credentials provided’
+Go to [Adding a new SSH key to your GitHub account] (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?platform=mac) and set up your personal token. After successfully setup your personal token, use that private key as your github password. 
+
+
 ## Docker Cleanup
 To make sure we do not have any running containers and clear up an unused images
 * Run `docker container ls`
