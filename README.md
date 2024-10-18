@@ -17,7 +17,7 @@
 │   ├── Pipfile
 │   ├── Readme.md
 │   └── Pipfile.lock
-├── fine-tuning-sg
+├── fine-tuning
 │   ├── env.dev
 │   ├── Readme.md
 │   ├── dataset-creator
@@ -142,7 +142,7 @@ Here is a visual of our data pipeline:
 
 Since each section is containerized, please access the readme’s of each subfolder to run each container:
 1. [Scraping](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/scraping)
-2. [Fine-Tuning](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/fine-tuning-sg)
+2. [Fine-Tuning](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/fine-tuning)
 3. [LLM-RAG Deployment](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/llm)
 4. [DVC](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/dvc)
 
