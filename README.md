@@ -139,7 +139,7 @@ Since each section is containerized, please access the readme’s of each subfol
 
 ## Container Preview
 When run, each section's container and its respective Pipenv virtual environment should appear in the terminal and in DockerHub as:
-![Container Image](https://github.com/ghattisu/AC215_Bloodwise/scraping/images/containerimage.png)
+![Container Image](https://github.com/ghattisu/AC215_Bloodwise/blob/starter/scraping/images/containerimage.png?raw=true)
 
 
 ### Resulting code options for each Container
