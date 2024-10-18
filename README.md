@@ -128,9 +128,9 @@ We scrapped several web pages from the Cleveland Clinic and Docus.AI that contai
 	
 	
 	  **Output:** A small text files (`.dvc`) that contain: 
-- Path to the actual data in the DVC cache, 
-- MD5 hash of the data
-- Information about how to reproduce the data
+	- Path to the actual data in the DVC cache, 
+	- MD5 hash of the data
+	- Information about how to reproduce the data
 
 
 
