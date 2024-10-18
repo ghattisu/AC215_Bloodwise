@@ -7,6 +7,7 @@ import glob
 import hashlib
 import chromadb
 import pandas as pd
+from google.cloud import storage
 
 # Vertex AI
 import vertexai
@@ -29,6 +30,7 @@ INPUT_FOLDER = "input-datasets"
 OUTPUT_FOLDER = "outputs"
 CHROMADB_HOST = "llm-rag-chromadb"
 CHROMADB_PORT = 8000
+GCS_BUCKET_NAME = "bloodwise-rag-knowledge-base"
 
 vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION)
 embedding_model = TextEmbeddingModel.from_pretrained(EMBEDDING_MODEL)
@@ -65,7 +67,7 @@ generative_model = GenerativeModel(
 	system_instruction=[SYSTEM_INSTRUCTION]
 )
 safety_settings = [
-    SafetySetting(x
+    SafetySetting(
         category=SafetySetting.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
         threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
     ),
@@ -156,6 +158,24 @@ def load_text_embeddings(df, collection, batch_size=500):
 	print(f"Finished inserting {total_inserted} items into collection '{collection.name}'")
 
 
+def download_input_data():
+    print("downloading")
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(GCS_BUCKET_NAME)
+    
+    prefix = "text-documents/"
+    blobs = bucket.list_blobs(prefix=prefix)
+    for blob in blobs:
+        # Create a local path for each blob
+        local_path = os.path.join("input-datasets", blob.name[len(prefix):])
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+
+        # Download the blob to the local path
+        blob.download_to_filename(local_path)
+
+    print("downloaded")
+
+
 def chunk(method="semantic-split"):
 	print("chunk()")
 
@@ -163,7 +183,7 @@ def chunk(method="semantic-split"):
 	os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
 	# Get the list of text file
-	text_files = glob.glob(os.path.join(INPUT_FOLDER, "books", "*.txt"))
+	text_files = glob.glob(os.path.join(INPUT_FOLDER, "*.txt"))
 	print("Number of files to process:", len(text_files))
 
 	# Process
@@ -315,15 +335,18 @@ def get_all_data(method="semantic-split"):
 
 def main(args=None):
 	print("CLI Arguments:", args)
+ 
+	if args.download:
+		download_input_data()
 
 	if args.chunk:
-		chunk(method=args.chunk_type)
+		chunk()
 
 	if args.embed:
-		embed(method=args.chunk_type)
+		embed()
 
 	if args.load:
-		load(method=args.chunk_type)
+		load()
 
 
 if __name__ == "__main__":
@@ -331,6 +354,11 @@ if __name__ == "__main__":
 	# if you type into the terminal '--help', it will provide the description
 	parser = argparse.ArgumentParser(description="CLI")
 
+	parser.add_argument(
+		"--download",
+		action="store_true",
+		help="Download knowledge base documents from GCS",
+	)
 	parser.add_argument(
 		"--chunk",
 		action="store_true",
@@ -347,7 +375,7 @@ if __name__ == "__main__":
 		help="Load embeddings to vector db",
 	)
 
-	parser.add_argument("--chunk_type", default="semantic-split", help="char-split | recursive-split | semantic-split")
+	# parser.add_argument("--chunk_type", default="semantic-split", help="char-split | recursive-split | semantic-split")
 
 	args = parser.parse_args()
 
