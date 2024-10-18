@@ -2,3 +2,4 @@ fine-tuning-sg/dataset-creator/data
 secrets
 llm/outputs
 llm/docker-volumes
+.DS_Store
