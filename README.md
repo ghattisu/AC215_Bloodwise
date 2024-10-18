@@ -184,6 +184,7 @@ python cli.py --chat
 
 **RAG and Deployment**
 ```
+python cli.py --download
 python cli.py --chunk
 python cli.py --embed
 python cli.py --load
