@@ -12,8 +12,8 @@ from vertexai.generative_models import GenerativeModel, GenerationConfig
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
-TRAIN_DATASET = "gs://llm-fine-tune-generation-sg/llm-finetune-dataset-small/train.jsonl" # Replace with your dataset
-VALIDATION_DATASET = "gs://llm-fine-tune-generation-sg/llm-finetune-dataset-small/test.jsonl" # Replace with your dataset
+TRAIN_DATASET = "gs://llm-fine-tune-dataset/llm-finetune-dataset-small/train.jsonl" # Replace with your dataset
+VALIDATION_DATASET = "gs://llm-fine-tune-dataset/llm-finetune-dataset-small/test.jsonl" # Replace with your dataset
 GCP_LOCATION = "us-central1"
 GENERATIVE_SOURCE_MODEL = "gemini-1.5-flash-002" # gemini-1.5-pro-002
 # Configuration settings for the content generation
@@ -36,7 +36,7 @@ def train(wait_for_job=False):
         epochs=1, # change to 2-3
         adapter_size=4,
         learning_rate_multiplier=1.0,
-        tuned_model_display_name="bloodwise-tuned-model-v3",
+        tuned_model_display_name="bloodwise-tuned-model-v1",
     )
     print("Training job started. Monitoring progress...\n\n")
 
@@ -63,11 +63,11 @@ def chat():
     #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/810191635601162240"
     #MODEL_ENDPOINT = "projects/129349313346/locations/us-central1/endpoints/5584851665544019968"
     #MODEL_ENDPOINT = "projects/945056213921/locations/us-central1/endpoints/1077223427569352704" # Finetuned model
-    MODEL_ENDPOINT = "projects/945056213921/locations/us-central1/endpoints/8860991696037478400"
+    MODEL_ENDPOINT = "projects/595664810090/locations/us-central1/endpoints/3140012794393395200"
     
     generative_model = GenerativeModel(MODEL_ENDPOINT)
 
-    query = "Hi, I just got my blood test results back and I'm a bit worried. My total cholesterol is 240 mg/dL, LDL is 160 mg/dL, HDL is 45 mg/dL, and triglycerides are 180 mg/dL. My fasting blood glucose is 110 mg/dL. I'm a 45-year-old man, slightly overweight, and I don't exercise much. What do these results mean, and what changes should I make to improve my health? "
+    query = "Hi! I just got my blood test results back and it shows that my LDL level is 160 mg/DL. What does this mean?"
     print("query: ",query)
     response = generative_model.generate_content(
         [query],  # Input prompt

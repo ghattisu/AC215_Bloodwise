@@ -1,4 +1,5 @@
 import os
+import sys
 import argparse
 import pandas as pd
 import json
@@ -73,9 +74,10 @@ SYSTEM_INSTRUCTION = """Generate a set of 1000 question-answer pairs about blood
    - The importance of regular check-ups and monitoring
    - How age, gender, and other factors can influence test results
    - The role of personalized medicine in interpreting blood test results
+
 5. Tone and Style:
    - Use a professional, authoritative, yet compassionate tone that conveys years of medical expertise
-   - Balance technical knowledge with accessible explanations from Dr. Chen
+   - Balance technical knowledge with accessible explanations from the medical guide
    - Express dedication to patient well-being while acknowledging the complexity of individual health situations
 
 6. Complexity and Depth:
@@ -89,15 +91,15 @@ SYSTEM_INSTRUCTION = """Generate a set of 1000 question-answer pairs about blood
    - Ensure questions cover a wide range of topics within blood testing and health improvement
 
 8. Answer Format:
-   - Begin each answer with a professional and reassuring introduction that establishes Dr. Chen's expertise. For example:
+   - Begin each answer with a professional and reassuring introduction that establishes our medical guide's expertise. For example:
      * "Hello, this is your online physician. I'm here to help you understand your blood test results."
      * "Good day, I'm your medical guide for interpreting these test results."
      * "Welcome to your health consultation. I'm your online medical guide, and I'll be explaining your blood work today."
-   - Include clear, factual information that brings Dr. Chen's expertise to life, such as:
+   - Include clear, factual information that brings the physician's expertise to life, such as:
      * "Based on current medical guidelines, a healthy total cholesterol level is generally below 200 mg/dL."
      * "Recent studies have shown that regular exercise can significantly improve your HDL cholesterol levels."
      * "It's important to remember that blood test results are just one part of your overall health picture."
-   - Incorporate reassuring and motivational phrases to enhance Dr. Chen's character:
+   - Incorporate reassuring and motivational phrases to enhance our medical guide's character:
      * "Don't worry, many of my patients have successfully improved their blood sugar levels with the right approach."
      * "Small, consistent changes in your diet can lead to significant improvements in your health markers."
      * "Remember, your health journey is unique, and we're here to support you every step of the way."
@@ -150,7 +152,7 @@ Note: The sample JSON provided includes only two Q&A pairs for brevity. The actu
 """
 
 def generate():
-    print("generate()")
+    print("generate")
 
     # Make dataset folders
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
@@ -169,7 +171,7 @@ def generate():
         2. Embody the professional, compassionate, and knowledgeable tone of a medical guide, an experienced physician with nutritional expertise.
         3. Incorporate relevant medical and nutritional information, including current health guidelines and research findings.
         4. Keep all content in English, explaining medical terms when first introduced.
-        5. Address all answers directly from Dr. Chen, maintaining a respectful and equitable approach to all patients.
+        5. Address all answers directly from a medical guide, maintaining a respectful and equitable approach to all patients.
         6. Include a mix of questions about common blood tests, their significance, interpretation of results, lifestyle changes, dietary recommendations, and their impact on health markers.
         7.Emphasize the importance of consulting with healthcare providers for personalized medical advice.
         8. Ensure accuracy and relevance of all medical information provided.
@@ -195,7 +197,11 @@ def generate():
             file.write(generated_text)
         except Exception as e:
           print(f"Error occurred while generating content: {e}")
-
+    
+    #determining how many pairs were actually generated
+    files = [f for f in os.listdir(OUTPUT_FOLDER) 
+             if os.path.isfile(os.path.join(OUTPUT_FOLDER, f)) and f.startswith('medical_qa')]
+    print("Total number of q/a pairs generated are: ", len(files)*20)
 
 def prepare():
     print("prepare()")

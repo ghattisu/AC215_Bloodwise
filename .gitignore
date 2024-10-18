@@ -1,1 +1,5 @@
-fine-tuning-sg/dataset-creator/data
+fine-tuning-sg/dataset-creator/data/*.
+secrets/
+*.txt
+*.csv
+*.jsonl
