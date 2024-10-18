@@ -5,6 +5,7 @@ In this container, we prepared a script that performs web scraping to gather inf
 ## Prerequisites
 * Have Docker installed
 * Cloned this repository to your local machine https://github.com/ghattisu/AC215_Bloodwise
+* Modify `env.dev` to represent your Bucket and Project Name.
 
 
 ## Run LLM RAG Container
