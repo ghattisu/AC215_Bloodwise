@@ -58,13 +58,14 @@ Remember:
 
 Your goal is to provide accurate, helpful information about blood test interpretation based solely on the content of the text chunks you receive with each query.
 """
-MODEL_ENDPOINT = "projects/534883346897/locations/us-central1/endpoints/5135811116760301568"
+#MODEL_ENDPOINT = "projects/534883346897/locations/us-central1/endpoints/5135811116760301568"
+MODEL_ENDPOINT = "projects/595664810090/locations/us-central1/endpoints/3140012794393395200"
 generative_model = GenerativeModel(
 	MODEL_ENDPOINT,
 	system_instruction=[SYSTEM_INSTRUCTION]
 )
 safety_settings = [
-    SafetySetting(
+    SafetySetting(x
         category=SafetySetting.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
         threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
     ),
@@ -346,7 +347,7 @@ if __name__ == "__main__":
 		help="Load embeddings to vector db",
 	)
 
-	# parser.add_argument("--chunk_type", default="semantic-split", help="char-split | recursive-split | semantic-split")
+	parser.add_argument("--chunk_type", default="semantic-split", help="char-split | recursive-split | semantic-split")
 
 	args = parser.parse_args()
 
