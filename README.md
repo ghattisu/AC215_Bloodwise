@@ -157,7 +157,8 @@ When run, each section's container and its respective Pipenv virtual environment
 
 **Scraping**
 ```
-python cli.py
+python cli.py --scrape
+python cli.py --upload
 
 ```
 
