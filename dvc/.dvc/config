@@ -1,6 +1,0 @@
-[core]
-    remote = llm-finetune-dataset
-['remote "input-datasets"']
-    url = gs://blooswise-data-versioning/dvc_store
-['remote "llm-finetune-dataset"']
-    url = gs://blooswise-data-versioning/dvc_store
