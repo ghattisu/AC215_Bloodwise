@@ -1,5 +1,6 @@
 # Data Versioning using DVC
-In this project, we use DVC as our data versioning tool. Everything will be run inside containers using Docker.
+- For data reproducibility and storage efficiency, data versioning is essential in machine learning and data science projects. We will be using [DVC](https://dvc.org/) as our data versioning tool. DVC (Data Version Control) is an open-source, Git-based tool that integrates seamlessly with Git, which is why we chose DVC for data versioning.
+- Everything will be run inside containers using Docker.
 
 ## Prerequisites
 * Have tha latest Docker installed
@@ -17,7 +18,7 @@ Your folder structure should look like:
 ```
     |-AC215_Bloodwise
         |-llm
-        |-fine-tuning-sg
+        |-fine-tuning
         |-scraping
         |-dvc
         |-secrets
