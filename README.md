@@ -52,6 +52,8 @@
 │   └── semantic_splitter.py
 └── scraping
     ├── biomarkers_glossary
+    ├── images
+    │   └── containerimage.png
     ├── biomarkers_glossary.csv
     ├── Dockerfile
     ├── Pipfile
@@ -83,6 +85,8 @@ The goal of this project is to develop an application that provides users with e
 
 
 In this milestone, we have the components for data management, including versioning, as well as the data scraping and cleaning needed to build out our RAG Pipeline. We have also attempted to fine-tune our LLM using dataset generation. Within the RAG container, we also launch our initial UI for our application.
+
+**
 
 
 **Data**
