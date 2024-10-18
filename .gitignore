@@ -1,6 +1,5 @@
+fine-tuning-sg/dataset-creator/data
 secrets
 llm/outputs
 llm/docker-volumes
-*.txt
-*.csv
-*.jsonl
+.DS_Store

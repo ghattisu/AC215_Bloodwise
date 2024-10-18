@@ -13,13 +13,19 @@ In this container, we prepared a script that performs web scraping to gather inf
 - Run `sh docker-shell.sh`
 
 ## Perform Scraping
-`python cli.py`
+`python cli.py --scrape`
 
 This will:
 * Scrape the Docus.ai and Cleveland Clinic web sources regarding metabolites
 * Collect links via pagination
 * Store each page in a dictionary
-* Document the pages in AC215_Bloodwise/scraping/biomarkers_glossary.csv
-* Save the collected pages as .txt files in AC215_Bloodwise/scraping/biomarkers_glossary
+* Save the collected pages as .txt files in AC215_Bloodwise/scraping/input-datasets folder
+
+
+## Upload scraped text documents to GCP Bucket
+`python cli.py --upload`
+
+This will:
+* Upload the .txt files in AC215_Bloodwise/scraping/input-datasets to a GCP bucket
 
 Once finished, navigate to the AC215_Bloodwise/llm directory to begin chunking and vectorizing the collected resources as a means to enhance LLM responses.
