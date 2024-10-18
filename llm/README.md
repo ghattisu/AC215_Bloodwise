@@ -22,7 +22,7 @@ Your folder structure should look like this:
 ```
     |-AC215_BLOODWISE
         |-llm
-        |-fine-tuning-sg
+        |-fine-tuning
         |-scraping
         |-dvc
         |-secrets
