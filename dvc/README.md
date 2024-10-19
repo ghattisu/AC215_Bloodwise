@@ -138,12 +138,13 @@ Your folder structure should look like:
 ```
 Inside the dvc folder, it will create a new datasets that contains only the input dataset for LLM 
 
+
 #### Caution!
 Everytime before you run `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev milestone2` or `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev milestone2`, please ensure that datasets folder does not exist!
 
 
 #### Troubleshooting
-When you enter `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev starter`, you will be asked to enter your github username and password. If you get the following error: 
+When you enter `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev milestone2`, you will be asked to enter your github username and password. If you get the following error: 
 ```
 ‘ERROR: failed to get 'dvc/datasets' - SCM error: Failed to clone repo 'https://github.com/ghattisu/AC215_Bloodwise.git' to '/tmp/tmpg0rguocjdvc-clone': No valid credentials provided’
 ```
