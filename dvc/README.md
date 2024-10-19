@@ -118,7 +118,7 @@ Run this outside the container.
 
 
 ### Get (different version) data using DVC 
-Run this outside the container 
+Run this inside the container 
 - To get the most recent version of the data, run `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev milestone2`
 Your folder structure should look like:
 ```
