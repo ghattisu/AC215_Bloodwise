@@ -196,7 +196,7 @@ python cli.py --load
 **DVC**
 ```
 # Current data version
-dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev starter
+dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev milestone2
 
 # Retrieve a different data version, let's try version 1
 dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev dataset_v1

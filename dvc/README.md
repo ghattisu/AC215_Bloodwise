@@ -45,7 +45,6 @@ Download the json file and place inside the secrets folder:
 - Create a folder `images` inside the bucket (This is where we will store the images that need to be versioned)
 
 ## Run DVC Container
-We will be using [DVC](https://dvc.org/) as our data versioning tool. DVC (Data Version Control) is an open-source, Git-based data science tool. It applies version control to your data, make your repo the backbone of your project.
 
 ### Setup DVC Container Parameters
 In order for the DVC container to connect to our GCS Bucket open the file `docker-shell.sh` and edit some of the values to match your setup
@@ -65,7 +64,6 @@ Note that we have added a new file called `docker-entrypoint.sh` to our developm
 
 For this container we need to:
 * Mount a GCS bucket to a volume mount in the container
-* We then mount the "images" folder in the bucket mount to the "/app/dataset" folder
 
 ### Run `docker-shell.sh`
 - Make sure you are inside the `dvc` folder and open a terminal at this location
@@ -98,11 +96,11 @@ Run this outside the container.
 - Commit changes `git commit -m '...'`
 - Add a dataset tag `git tag -a 'dataset_v1' -m 'tag dataset'`
 - Push changes to github
+- Push tag to github `git push --tags`
 
 ## Make changes to data
 
-### Upload images
-- Upload a few more images to the `images` folder in your bucket (We are simulating some change in data)
+### Upload new dataset from local
 
 #### Add the dataset (changes) to registry
 `dvc add datasets`
@@ -116,15 +114,40 @@ Run this outside the container.
 - Commit changes `git commit -m '...'`
 - Add a dataset tag `git tag -a 'dataset_v2' -m 'tag dataset'`
 - Push changes to github
+- Push tag to github `git push --tags`
 
 
 ### Get (different version) data using DVC 
 Run this outside the container 
-- To get the most recent version of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev starter`
-- To get the specific version (previous version) of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev dataset_v1`
+- To get the most recent version of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev milestone2`
+Your folder structure should look like:
+```
+    |-datasets
+        |-input-datasets
+        |-llm-finetune-dataset
+```
+Inside the dvc folder, it will create a new datasets that contains input dataset for both LLM and Fine-tuning
 
-When you enter `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev starter` you will be asked to enter your github username and password. If you get the following error ‘ERROR: failed to get 'dvc/datasets' - SCM error: Failed to clone repo 'https://github.com/ghattisu/AC215_Bloodwise.git' to '/tmp/tmpg0rguocjdvc-clone': No valid credentials provided’
-Go to [Adding a new SSH key to your GitHub account] (https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?platform=mac) and set up your personal token. After successfully setup your personal token, use that private key as your github password. 
+
+- To get the specific version (previous version) of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev dataset_v1`
+Your folder structure should look like:
+```
+    |-datasets
+        |-input-datasets
+
+```
+Inside the dvc folder, it will create a new datasets that contains only the input dataset for LLM 
+
+##### Caution!
+Everytime before you run `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev milestone2` or `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev milestone2`, please ensure that datasets folder does not exist!
+
+
+##### Troubleshooting
+When you enter `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev starter`, you will be asked to enter your github username and password. If you get the following error: 
+```
+‘ERROR: failed to get 'dvc/datasets' - SCM error: Failed to clone repo 'https://github.com/ghattisu/AC215_Bloodwise.git' to '/tmp/tmpg0rguocjdvc-clone': No valid credentials provided’
+```
+Go to [Adding a new SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?platform=mac) to set up your personal token. After successfully setup your personal token, use that private key as your github password.
 
 
 ## Docker Cleanup
