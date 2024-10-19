@@ -119,7 +119,7 @@ Run this outside the container.
 
 ### Get (different version) data using DVC 
 Run this outside the container 
-- To get the most recent version of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev milestone2`
+- To get the most recent version of the data, run `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev milestone2`
 Your folder structure should look like:
 ```
     |-datasets
@@ -129,7 +129,7 @@ Your folder structure should look like:
 Inside the dvc folder, it will create a new datasets that contains input dataset for both LLM and Fine-tuning
 
 
-- To get the specific version (previous version) of the data `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev dataset_v1`
+- To get the specific version (previous version) of the data, run `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev dataset_v1`
 Your folder structure should look like:
 ```
     |-datasets
@@ -138,11 +138,11 @@ Your folder structure should look like:
 ```
 Inside the dvc folder, it will create a new datasets that contains only the input dataset for LLM 
 
-##### Caution!
+#### Caution!
 Everytime before you run `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev milestone2` or `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev milestone2`, please ensure that datasets folder does not exist!
 
 
-##### Troubleshooting
+#### Troubleshooting
 When you enter `dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --rev starter`, you will be asked to enter your github username and password. If you get the following error: 
 ```
 ‘ERROR: failed to get 'dvc/datasets' - SCM error: Failed to clone repo 'https://github.com/ghattisu/AC215_Bloodwise.git' to '/tmp/tmpg0rguocjdvc-clone': No valid credentials provided’
