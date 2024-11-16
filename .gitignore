@@ -5,3 +5,4 @@ llm/docker-volumes
 *.txt
 *.csv
 *.jsonl
+.pytest_cache

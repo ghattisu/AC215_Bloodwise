@@ -12,71 +12,68 @@ GCP_LOCATION = "us-central1"
 OUTPUT_FOLDER = "input-datasets"
 GCS_BUCKET_NAME = os.environ["GCS_BUCKET_NAME"]
 
-def scrape():
-    ## docus
-    url = 'https://docus.ai/glossary/biomarkers'
+def make_request(url):
+    """Handles HTTP requests and returns the content of the page."""
     response = requests.get(url)
-    content = response.text
-    soup = BeautifulSoup(content, 'html.parser')
-    cards = soup.find_all('div', class_='ant-col ant-col-xs-24 css-1drr2mu')
+    response.raise_for_status()  # raises exception when not a 2xx response
+    return response.text
+
+def extract_links_from_cards(soup, class_name):
+    """Extracts links from the cards in the BeautifulSoup object."""
+    cards = soup.find_all('div', class_=class_name)
     links = []
     for card in cards:
         link = card.find('a')
-        if(link):
-            if not link.get('href').startswith('/tags'):
-                links.append(link.get('href'))
+        if link and not link.get('href').startswith('/tags'):
+            links.append(link.get('href'))
+    return links
 
+def extract_text_from_page(soup, content_class):
+    """Extracts the text content from a page."""
+    page_content = soup.find('section', class_=content_class)
+    text = ''
+    if page_content:
+        for i in page_content.find_all('div', recursive=False)[2:]:
+            text += i.get_text() + "\n"
+    return text
+
+def save_to_file(filename, content):
+    """Saves the scraped content to a file."""
+    with open(filename, 'w') as file:
+        file.write(content)
+
+def scrape_biomarkers_page(start_url):
+    """Scrape the Docus AI glossary biomarker pages."""
     page = 1
+    links = []
     while True:
-        url = f'https://docus.ai/glossary/biomarkers?page={page}'
-        response = requests.get(url)
-        content = response.text
+        url = f'{start_url}?page={page}'
+        content = make_request(url)
         if 'No results found' in content:
             break
-        
         soup = BeautifulSoup(content, 'html.parser')
-        cards = soup.find_all('div', class_='ant-col ant-col-xs-24 css-1drr2mu')
-        for card in cards:
-            link = card.find('a')
-            if(link):
-                if not link.get('href').startswith('/tags'):
-                    links.append(link.get('href'))
+        links += extract_links_from_cards(soup, 'ant-col ant-col-xs-24 css-1drr2mu')
         page += 1
+    return links
 
+def scrape_biomarkers_info(links):
+    """Scrape details from the individual biomarkers pages."""
     biomarkers_glossary = {}
-    for url in links: 
-        response = requests.get(f"https://docus.ai/{url}")
-        content = response.text
+    for url in links:
+        content = make_request(f"https://docus.ai/{url}")
         soup = BeautifulSoup(content, 'html.parser')
-
-        page_content = soup.find('section', class_='sc-5d4eaeca-0 htRsFi sc-fdf5dc80-0 gsFBbo')
-        if page_content:
-            content_div = page_content.find_all('div')
-
-            text = ''
-            for i in page_content.find_all('div', recursive=False)[2:]:
-                text += i.get_text() + "\n"
-        else:
-            content_div = []
-            text = ''
-
         title = soup.find("h1")
+        text = extract_text_from_page(soup, 'sc-5d4eaeca-0 htRsFi sc-fdf5dc80-0 gsFBbo')
         if title:
             biomarkers_glossary[title.text] = text
+    return biomarkers_glossary
 
-    # make each entry into a txt file
-    for key, value in biomarkers_glossary.items():
-        with open(f'input-datasets/{key}.txt', 'w') as file:
-            file.write(value)
-
-    # CLEVELAND CLINIC
+def scrape_cleveland_clinic():
+    """Scrape Cleveland Clinic page and linked articles."""
     url = "https://my.clevelandclinic.org/health/diagnostics/4053-complete-blood-count"
-    response = requests.get(url)
-    content = response.text
-
+    content = make_request(url)
     soup = BeautifulSoup(content, 'html.parser')
     page_content = soup.find('div', {'data-identity': 'main-article-content'})
-
     cleveland_cbc_text = soup.find('h1').text + "\n"
     for i in page_content.find_all('div', recursive=False)[1:-1]:
         cleveland_cbc_text += i.get_text() + "\n"
@@ -84,33 +81,39 @@ def scrape():
     for link in page_content.find_all('a'):
         if link.get('href').startswith('https://my.clevelandclinic.org/'):
             links.append(link.get('href'))
+    return cleveland_cbc_text, links
 
-    import time
-    for link in links: 
-        try: 
-            response = requests.get(link)
-            content = response.text
+def scrape():
+    # Docus AI Biomarkers
+    start_url = 'https://docus.ai/glossary/biomarkers'
+    links = scrape_biomarkers_page(start_url)
+    biomarkers_glossary = scrape_biomarkers_info(links)
+
+    # Save biomarkers info to files
+    for key, value in biomarkers_glossary.items():
+        save_to_file(f'input-datasets/{key}.txt', value)
+
+    # Cleveland Clinic
+    cleveland_cbc_text, links = scrape_cleveland_clinic()
+
+    # Process the Cleveland Clinic links and collect text
+    while links:
+        try:
+            new_link = links.pop(0)
+            content = make_request(new_link)
             soup = BeautifulSoup(content, 'html.parser')
-
             page_content = soup.find('div', {'data-identity': 'main-article-content'})
             cleveland_cbc_text += soup.find('h1').text + "\n"
-            print(soup.find('h1').text)
-
             for i in page_content.find_all('div', recursive=False)[1:-1]:
                 cleveland_cbc_text += i.get_text() + "\n"
-
             for link in page_content.find_all('a'):
-                if link.get('href').startswith('https://my.clevelandclinic.org/'):
-                    if(link.get('href') not in links):
-                        links.append(link.get('href'))
-        except: 
-            print(link)
-            time.sleep(5)
+                href = link.get('href')
+                if href.startswith('https://my.clevelandclinic.org/') and href not in links:
+                    links.append(href)
+        except Exception as e:
+            print(f"Error with link: {new_link}, error: {e}")
 
-    # export to a text file
-    with open('input-datasets/cleveland_clinic.txt', 'w') as file:
-        file.write(cleveland_cbc_text)
-
+    save_to_file('input-datasets/cleveland_clinic.txt', cleveland_cbc_text)
     print("Done!")
     
     
