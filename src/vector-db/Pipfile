@@ -16,6 +16,7 @@ langchain = "*"
 llama-index = "*"
 chromadb = "*"
 langchain-community = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.12"
