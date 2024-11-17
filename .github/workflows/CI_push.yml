@@ -29,7 +29,7 @@ jobs:
       - name: Install pytest and pytest-cov
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest-cov flake8 requests requests_mock
+          pip install pytest pytest-cov flake8 requests requests_mock bs4
 
       # Step 4: Run Flake8
       - name: Run Flake8
