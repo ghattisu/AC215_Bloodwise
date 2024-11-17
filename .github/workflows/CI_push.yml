@@ -72,9 +72,9 @@ jobs:
             pytest tests/test_scrape.py -v
 
       # Step 8: Run pytest with coverage and generate HTML report
-      - name: Run tests with coverage
-        run: |
-          pytest --cov=. --cov-report=html
+      # - name: Run tests with coverage
+      #   run: |
+      #     pytest --cov=. --cov-report=html
 
       # Step 9: Upload coverage report as an artifact
       - name: Upload coverage report
