@@ -12,6 +12,7 @@ google-cloud-aiplatform = "*"
 pandas = "*"
 bs4 = "*"
 requests-mock = "*"
+pytest = "*"
 
 [dev-packages]
 
