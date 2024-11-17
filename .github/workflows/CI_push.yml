@@ -45,7 +45,7 @@ jobs:
       # Step 5: Run pytest with coverage and generate HTML report
       - name: Run tests with coverage
         run: |
-          cd ${{ github.workspace }}/scraping/
+          cd ${{ github.workspace }}/src/scraping/
           docker build -t llm-scraping -f Dockerfile .
 
       - name: Run Test
