@@ -67,7 +67,6 @@ jobs:
             -e GCS_SERVICE_ACCOUNT=${GCS_SERVICE_ACCOUNT} \
             -e GCP_REGION=${GCP_REGION} \
             llm-scraping \
-            pip install pytest
             pytest tests/test_scrape.py -v
 
       # Step 6: Upload coverage report as an artifact
