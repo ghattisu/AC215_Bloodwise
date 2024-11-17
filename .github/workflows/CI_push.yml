@@ -13,36 +13,38 @@ jobs:
       # Step 1: Checkout the repository code
       - name: Check out repository code
         uses: actions/checkout@v4
+
+      # Step 2: Authenticate to Google Cloud
       - id: 'auth'
         uses: google-github-actions/auth@v1
         with:
           credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-      # Step 2: Set up Python environment (specifically Python 3.12)
+      # Step 3: Set up Python environment (specifically Python 3.9)
       - name: Set up Python 3.9
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      # Step 2.1: Set PYTHONPATH to include the root directory (or src if relevant)
+      # Step 3.1: Set PYTHONPATH to include the root directory (or src if relevant)
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV  # Adds current directory to PYTHONPATH
 
-      # Step 3: Install pytest and pytest-cov for coverage
+      # Step 4: Install pytest and pytest-cov for coverage
       - name: Install pytest and pytest-cov
         run: |
           python -m pip install --upgrade pip
           pip install pytest pytest-cov flake8 
           
-      # Step 4: Run Flake8
+      # Step 5: Run Flake8
       - name: Run Flake8
         run: flake8 .
 
-      # Step 2: Set up Docker
+      # Step 6: Set up Docker
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
 
-      # Step 5: Run pytest with coverage and generate HTML report
+      # Step 7: Build and run tests
       - name: Run tests with coverage
         run: |
           cd ${{ github.workspace }}/src/scraping/
@@ -69,7 +71,12 @@ jobs:
             llm-scraping \
             pytest tests/test_scrape.py -v
 
-      # Step 6: Upload coverage report as an artifact
+      # Step 8: Run pytest with coverage and generate HTML report
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=. --cov-report=html
+
+      # Step 9: Upload coverage report as an artifact
       - name: Upload coverage report
         uses: actions/upload-artifact@v3
         with:
