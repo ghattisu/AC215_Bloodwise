@@ -8,10 +8,10 @@
 ├── Readme.md
 ├── src
 │   ├── api-service
+│   ├── dvc
 │   ├── frontend-react
 │   ├── scraping
 │   ├── vector-db
-│   ├── dvc
 ├── .github/workflows
 ├── .flask8
 └── .gitignore
