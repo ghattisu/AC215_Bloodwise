@@ -11,8 +11,12 @@ jobs:
 
     steps:
       # Step 1: Checkout the repository code
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - id: 'auth'
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
 
       # Step 2: Set up Python environment (specifically Python 3.12)
       - name: Set up Python 3.9
@@ -24,7 +28,6 @@ jobs:
       - name: Set PYTHONPATH
         run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV  # Adds current directory to PYTHONPATH
 
-
       # Step 3: Install pytest and pytest-cov for coverage
       - name: Install pytest and pytest-cov
         run: |
@@ -35,12 +38,37 @@ jobs:
       - name: Run Flake8
         run: flake8 .
 
+      # Step 2: Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1
+
       # Step 5: Run pytest with coverage and generate HTML report
       - name: Run tests with coverage
         run: |
           cd ${{ github.workspace }}/scraping/
-          sh docker-shell.sh
-          pytest --cov=. --cov-report=html
+          docker build -t llm-scraping -f Dockerfile .
+
+      - name: Run Test
+        env:
+          GCP_PROJECT: bloodwise-ai
+          GCP_ZONE: us-central1-a
+          GCS_BUCKET_NAME: bloodwise-rag-knowledge-base
+          GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
+          GCP_REGION: us-central1
+          GOOGLE_APPLICATION_CREDENTIALS: /workspace/credentials.json
+
+        run: |
+          docker run --rm \
+            -v /tmp/credentials.json:/workspace/credentials.json \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/workspace/credentials.json \
+            -e GCP_PROJECT=${GCP_PROJECT} \
+            -e GCP_ZONE=${GCP_ZONE} \
+            -e GCS_BUCKET_NAME=${GCS_BUCKET_NAME} \
+            -e GCS_SERVICE_ACCOUNT=${GCS_SERVICE_ACCOUNT} \
+            -e GCP_REGION=${GCP_REGION} \
+            llm-scraping \
+            pip install pytest
+            pytest tests/test_scrape.py -v
 
       # Step 6: Upload coverage report as an artifact
       - name: Upload coverage report
