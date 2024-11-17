@@ -19,6 +19,7 @@ pillow = "*"
 chromadb = "==0.5.7"
 tensorflow = "==2.17.0"
 pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.12"
