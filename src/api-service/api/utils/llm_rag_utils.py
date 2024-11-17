@@ -7,23 +7,27 @@ from PIL import Image
 from pathlib import Path
 import traceback
 import chromadb
+import vertexai
 from vertexai.language_models import TextEmbeddingInput, TextEmbeddingModel
+from vertexai.generative_models import GenerativeModel, SafetySetting, GenerationConfig, Content, Part, ToolConfig
 from vertexai.generative_models import GenerativeModel, ChatSession, Part
-import pandas as pd
 
 # Setup
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCP_LOCATION = "us-central1"
 EMBEDDING_MODEL = "text-embedding-004"
 EMBEDDING_DIMENSION = 256
-GENERATIVE_MODEL = "gemini-1.5-flash-002"
+GENERATIVE_MODEL = "gemini-1.5-flash-001"
 CHROMADB_HOST = os.environ["CHROMADB_HOST"]
 CHROMADB_PORT = os.environ["CHROMADB_PORT"]
 
+vertexai.init(project=GCP_PROJECT, location=GCP_LOCATION)
+embedding_model = TextEmbeddingModel.from_pretrained(EMBEDDING_MODEL)
+
 # Configuration settings for the content generation
 generation_config = {
-    "max_output_tokens": 3000,  # Maximum number of tokens for output
-    "temperature": 0.1,  # Control randomness in output
+    "max_output_tokens": 8192,  # Maximum number of tokens for output
+    "temperature": 0.25,  # Control randomness in output
     "top_p": 0.95,  # Use nucleus sampling
 }
 
@@ -47,11 +51,43 @@ Remember:
 
 Your goal is to provide accurate, helpful information about blood test interpretation based solely on the content of the text chunks you receive with each query.
 """
+MODEL_ENDPOINT = "projects/595664810090/locations/us-central1/endpoints/3140012794393395200"
 generative_model = GenerativeModel(
-    GENERATIVE_MODEL, system_instruction=[SYSTEM_INSTRUCTION]
+	MODEL_ENDPOINT,
+	system_instruction=[SYSTEM_INSTRUCTION]
 )
-# https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api#python
-embedding_model = TextEmbeddingModel.from_pretrained(EMBEDDING_MODEL)
+safety_settings = [
+    SafetySetting(
+        category=SafetySetting.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+        threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
+    ),
+    SafetySetting(
+        category=SafetySetting.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+        threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
+    ),
+    SafetySetting(
+        category=SafetySetting.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+        threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
+    ),
+    SafetySetting(
+        category=SafetySetting.HarmCategory.HARM_CATEGORY_HARASSMENT,
+        threshold=SafetySetting.HarmBlockThreshold.BLOCK_ONLY_HIGH
+    ),
+]
+
+book_mappings = {
+	"Albumin: Importance, Testing, and What Abnormal Levels Mean": {"author":"Docus", "year": 2024},
+	"Blood Differential": {"author":"MedlinePlus", "year": 2022},
+	"Hematocrit Test": {"author":"MedlinePlus", "year": 2022},
+	"Hemoglobin Test": {"author":"MedlinePlus", "year": 2022},
+	"Platelet Tests": {"author":"MedlinePlus", "year": 2022},
+	"White Blood Count (WBC)": {"author":"MedlinePlus", "year": 2022},
+	"Red Blood Cell (RBC) Count": {"author":"MedlinePlus", "year": 2022},
+	"MCV (Mean Corpuscular Volume)": {"author":"MedlinePlus", "year": 2022},
+	"cleveland_clinic": {"author":"Cleveland Clinic", "year": 2024},
+	"cbc_test_dictionary": {"author":"Kaggle", "year": 2023},
+
+}
 
 # Initialize chat sessions
 chat_sessions: Dict[str, ChatSession] = {}
@@ -63,22 +99,15 @@ collection_name = f"{method}-collection"
 # Get the collection
 collection = client.get_collection(name=collection_name)
 
-
 def generate_query_embedding(query):
-    query_embedding_inputs = [
-        TextEmbeddingInput(task_type="RETRIEVAL_DOCUMENT", text=query)
-    ]
-    kwargs = (
-        dict(output_dimensionality=EMBEDDING_DIMENSION) if EMBEDDING_DIMENSION else {}
-    )
-    embeddings = embedding_model.get_embeddings(query_embedding_inputs, **kwargs)
-    return embeddings[0].values
-
+	query_embedding_inputs = [TextEmbeddingInput(task_type='RETRIEVAL_DOCUMENT', text=query)]
+	kwargs = dict(output_dimensionality=EMBEDDING_DIMENSION) if EMBEDDING_DIMENSION else {}
+	embeddings = embedding_model.get_embeddings(query_embedding_inputs, **kwargs)
+	return embeddings[0].values
 
 def create_chat_session() -> ChatSession:
     """Create a new chat session with the model"""
     return generative_model.start_chat()
-
 
 def generate_chat_response(chat_session: ChatSession, message: Dict) -> str:
     """
@@ -226,7 +255,6 @@ def generate_chat_response(chat_session: ChatSession, message: Dict) -> str:
         #             message_parts.append(message["content"])
         #         else:
         #             message_parts.append("Name the cheese in the image, no descriptions needed")
-
         #     except ValueError as e:
         #         print(f"Error processing image: {str(e)}")
         #         raise HTTPException(
