@@ -1,19 +1,19 @@
 [[source]]
-name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
-
-[dev-packages]
+name = "pypi"
 
 [packages]
 user-agent = "*"
 requests = "*"
 google-cloud-storage = "*"
 google-generativeai = "*"
-google-cloud-aiplatform = ">=1.38"
+google-cloud-aiplatform = "*"
 pandas = "*"
 bs4 = "*"
-time = "*"
+requests-mock = "*"
+
+[dev-packages]
 
 [requires]
 python_version = "3.9"
