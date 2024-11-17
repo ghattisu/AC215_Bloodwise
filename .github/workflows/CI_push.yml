@@ -34,13 +34,12 @@ jobs:
 
       # Step 4: Run Flake8
       - name: Run Flake8
-        run: |
-          pipenv run flake8 .
+        run: flake8 .
 
       # Step 5: Run pytest with coverage and generate HTML report
       - name: Run tests with coverage
         run: |
-          pipenv run pytest --cov=. --cov-report=html
+          pytest --cov=. --cov-report=html
 
       # Step 6: Upload coverage report as an artifact
       - name: Upload coverage report
