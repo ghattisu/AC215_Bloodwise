@@ -1,4 +1,4 @@
-## Milestone 2
+## Milestone 4
 
 
 #### Project Milestone 4 Organization
@@ -14,7 +14,8 @@
 │   ├── vector-db
 ├── .github/workflows
 ├── .flask8
-└── .gitignore
+├── .gitignore
+├── secrets
 ```
 
 
@@ -68,21 +69,21 @@ A user friendly React app was built to serve as a chat interface for users tryin
 	  **Output:** CSV and txt files of scrapped webpages to be used for LLM
 
 
-2. API-Service: generates a question/answer dataset to be used to finetune the Gemini Model 
+2. API-Service: prepares FAST API services to be used for the Frontend REACT web-app. There are 4 primary chatting functions, including one that allows the upload of a csv.
 
 
-	  **Input:** Source and destination GCS locations, Vertex AI-service account
+	  **Input:** User inputs and RAG documents from running ChromaDB Instance
 	
 	
-	  **Output:** Fine-tuned Gemini model deployed to an endpoint
+	  **Output:** Endpoint Responses reflected on front-end. 
 
 
-3. Frontend React: this prepares the data generated from scraping for the RAG model, including tasks such as chunking, embedding, and populating the vector database. It then calls on the fine-tuned model and deploys the application interface.
+3. Frontend React: Presents a user-friendly web-app interface to interact with Bloodwise. 
  
-	  **Input:** Scraped txt files and csv file, Vertex AI-service account
+	  **Input:** None
 	
 	
-	  **Output:** Streamlit app with RAG fine-tuned LLM
+	  **Output:** User-friendly application
 
 
 4. DVC: sets-up and runs DVC to ensure proper version control of the data being used. 
@@ -105,11 +106,11 @@ A user friendly React app was built to serve as a chat interface for users tryin
 Here is a visual of our data pipeline: 
 
 Since each section is containerized, please access the readme’s of each subfolder to run each container:
-1. [Scraping](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/scraping)
-2. [Fine-Tuning](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/fine-tuning)
-3. [LLM-RAG Deployment](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/llm)
-4. [DVC](https://github.com/ghattisu/AC215_Bloodwise/tree/starter/dvc)
-
+1. [Scraping](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone4/src/scraping)
+2. [Vector DB](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone4/src/vector-db)
+3. [API-Service](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone4/src/api-service)
+4. [Frontend](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone4/src/frontend-react)
+5. [DVC](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone4/src/dvc)
 
 ## Container Preview
 When run, each section's container and its respective Pipenv virtual environment should appear in the terminal and in DockerHub as:
