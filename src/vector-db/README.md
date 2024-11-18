@@ -72,4 +72,8 @@ This will:
 ## (shortcut) chunking -> embedding -> loading the vector db
 `python cli.py --chunk --embed --load`
 
-## Make sure to keep this container running as you launch your API and Frontend Components!**
+**Make sure to keep this container running as you launch your API and Frontend Components!**
+
+## Testing in this container
+For this particular continer, within the `tests/` folder, you will find a test for .....
+
