@@ -20,103 +20,47 @@ jobs:
         with:
           credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
 
+       # Step 3: Set up Docker
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-          
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-            path: /tmp/.buildx-cache
-            key: ${{ runner.os }}-buildx-${{ github.sha }}
-            restore-keys: |
-              ${{ runner.os }}-buildx-
-  
-        # Cache Docker Compose
-      - name: Cache Docker Compose
-        id: docker-compose-cache
-        uses: actions/cache@v3
-        with:
-          path: /usr/local/bin/docker-compose
-          key: ${{ runner.os }}-docker-compose-${{ hashFiles('/usr/local/bin/docker-compose') }}
-  
-        # Install Docker Compose if not cached
-      - name: Install Docker Compose if not cached
-        if: steps.docker-compose-cache.outputs.cache-hit != 'true'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-  
-        # Build Docker image
-      - name: Build and cache Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: false
-          load: true
-          tags: myapp:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-  
-        # Move cache
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-      # Step 3: Set up Python environment (specifically Python 3.9)
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Cache pip packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/Pipfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      # Step 3.1: Set PYTHONPATH to include the root directory (or src if relevant)
-      - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV  # Adds current directory to PYTHONPATH
-
-      # Step 4: Install pytest and pytest-cov for coverage
-      - name: Install pytest and pytest-cov
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest pytest-cov flake8 
-          
-      # Step 5: Run Flake8
-      - name: Run Flake8
-        run: flake8 .
-
-      # Step 6: Set up Docker
-      - name: Set up Docker
         uses: docker/setup-buildx-action@v1
 
-      # Step 7: Build and run tests
-      - name: Run tests with coverage
-        run: |
-          cd ${{ github.workspace }}/src/vector-db/
-          docker build -t bloodwise-vector-db-cli -f Dockerfile .
+     # Step 4: Create Docker network
+      - name: Create Docker network
+        run: docker network create bloodwise-network || true
 
-      - name: Run Test
+     # Step 5: Write GCP credentials
+      - name: Prepare credentials
+        run: |
+          mkdir -p secrets
+          echo '${{ secrets.GOOGLE_CREDENTIALS }}' > secrets/llm-service-account.json
+
+     # Step 6: Build and run services
+      - name: Build and run services
         env:
           GCP_PROJECT: bloodwise-ai
-          GCP_ZONE: us-central1-a
-          GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
-          GCP_REGION: us-central1
-          GOOGLE_APPLICATION_CREDENTIALS: /workspace/credentials.json
-
+          GOOGLE_APPLICATION_CREDENTIALS: /secrets/llm-service-account.json
+          IMAGE_NAME: bloodwise-vector-db-cli
         run: |
-          docker-compose run --rm --service-ports \
-            bloodwise-vector-db-cli \
-            pytest tests/test_db.py -v
+          cd ${{ github.workspace }}/vector-db/
+          docker build -t $IMAGE_NAME -f Dockerfile .
+          docker-compose up -d chromadb
 
-      # Step 9: Upload coverage report as an artifact
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: htmlcov  # The folder where pytest-cov stores HTML reports
+          sleep 10
+          
+          docker-compose run --rm \
+            -e GOOGLE_APPLICATION_CREDENTIALS=$GOOGLE_APPLICATION_CREDENTIALS \
+            -e GCP_PROJECT=$GCP_PROJECT \
+            bloodwise-vector-db-cli \
+            pipenv run pytest
+
+     # Step 7: Cleanup
+      - name: Cleanup
+        if: always()
+        run: |
+          cd ${{ github.workspace }}/vector-db/
+          docker-compose down
+          docker network rm bloodwise-network || true
+
+
+
+            
