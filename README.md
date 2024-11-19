@@ -52,10 +52,12 @@ Here is our Technical Architecture:
 ![Mockup](images/Mockup2.png)
 
 **Backend API**
+
 We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
 ![Mockup](images/api_server.JPG)
 
 **Frontend API**
+
 A user friendly React app was built to serve as a chat interface for users trying to understand their blood tests results. The chat uses a fine-tuned Gemini LLM model augmented with a RAG pipeline with documents loaded through a vector database, specifically ChromaDB. Using the app, the user can upload a csv of blood test results and/or add additional questions using the chat feature to understand what each individual resutls mean, if they are normal and abnromal, and will provide ways to improve certain abnormal results.
 ![Mockup](images/bloodwise_1.JPG)
 ![Mockup](images/bloodwise_2.JPG)
@@ -114,12 +116,8 @@ Since each section is containerized, please access the readme’s of each subfol
 4. [Frontend](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone4/src/frontend-react)
 5. [DVC](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone4/src/dvc)
 
-## Container Preview
-When run, each section's container and its respective Pipenv virtual environment should appear in the terminal and in DockerHub as:
-![Container Image](https://github.com/ghattisu/AC215_Bloodwise/blob/starter/scraping/images/containerimage.png?raw=true)
 
-
-### Resulting code options for each Container
+### Summary Code for Each Container
 
 
 **Scraping**
@@ -149,7 +147,7 @@ python cli.py --chat
 ```
 
 
-**RAG and Deployment**
+**Vector DB**
 ```
 python cli.py --download
 python cli.py --chunk
