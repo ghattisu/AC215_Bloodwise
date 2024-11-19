@@ -16,12 +16,18 @@
 
 Your folder structure should look like:
 ```
-    |-AC215_Bloodwise
-        |-llm
-        |-fine-tuning
-        |-scraping
-        |-dvc
-        |-secrets
+    ├── Readme.md
+    ├── images
+    ├── src
+    │   ├── api-service
+    │   ├── dvc
+    │   ├── frontend-react
+    │   ├── scraping
+    │   ├── vector-db
+    ├── .github/workflows
+    ├── .flask8
+    ├── .gitignore
+    ├── secrets
 ```
 
 ### Setup GCP Service Account
