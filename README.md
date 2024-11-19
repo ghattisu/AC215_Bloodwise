@@ -56,8 +56,8 @@ We built backend api service using fast API to expose model functionality to the
 
 **Frontend API**
 A user friendly React app was built to serve as a chat interface for users trying to understand their blood tests results. The chat uses a fine-tuned Gemini LLM model augmented with a RAG pipeline with documents loaded through a vector database, specifically ChromaDB. Using the app, the user can upload a csv of blood test results and/or add additional questions using the chat feature to understand what each individual resutls mean, if they are normal and abnromal, and will provide ways to improve certain abnormal results.
-![Mockup](images/bloodwise_2.JPG)
 ![Mockup](images/bloodwise_1.JPG)
+![Mockup](images/bloodwise_2.JPG)
 
 
 **Data Component Containers**
