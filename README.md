@@ -45,10 +45,10 @@ After completions of building a robust ML Pipeline in our previous milestone we 
 Before we start implementing the app we built a detailed design document outlining the application’s architecture. We built a Solution Architecture and Technical Architecture to ensure all our components work together.
 
 Here is our Solution Architecture:
-![Mockup](Mockup1.png)
+![Mockup](images/Mockup1.png)
 
 Here is our Technical Architecture:
-![Mockup](Mockup2.png)
+![Mockup](images/Mockup2.png)
 
 **Backend API**
 We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
