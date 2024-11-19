@@ -5,8 +5,6 @@ This container manages the API functions to initialize the BloodWise AI Chatbot 
 ## Prerequisites
 * Have Docker installed
 * Cloned this repository to your local machine https://github.com/ghattisu/AC215_Bloodwise
-* Modify `env.dev` to represent your Bucket and Project Name.
-
 
 ## Run Container
 - Make sure you are inside the `api-service` folder and open a terminal at this location
