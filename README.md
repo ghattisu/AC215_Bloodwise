@@ -52,11 +52,12 @@ Here is our Technical Architecture:
 
 **Backend API**
 We built backend api service using fast API to expose model functionality to the frontend. We also added apis that will help the frontend display some key information about the model and data.
-![Mockup](Mockup.png)
+![Mockup](images/api_server.JPG)
 
 **Frontend API**
 A user friendly React app was built to serve as a chat interface for users trying to understand their blood tests results. The chat uses a fine-tuned Gemini LLM model augmented with a RAG pipeline with documents loaded through a vector database, specifically ChromaDB. Using the app, the user can upload a csv of blood test results and/or add additional questions using the chat feature to understand what each individual resutls mean, if they are normal and abnromal, and will provide ways to improve certain abnormal results.
-![Mockup](Mockup.png)
+![Mockup](images/bloodwise_2.JPG)
+![Mockup](images/bloodwise_1.JPG)
 
 
 **Data Component Containers**
