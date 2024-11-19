@@ -9,5 +9,5 @@ if [[ -z ${args} ]];
 then
     pipenv shell
 else
-  pipenv run python $args
+  pipenv run $args
 fi
