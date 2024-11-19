@@ -72,8 +72,15 @@ A user friendly React app was built to serve as a chat interface for users tryin
 	
 	  **Output:** CSV and txt files of scrapped webpages to be used for LLM
 
+2. Vector DB: Downloads the saved files to instantiate a Chroma DB instance for RAG
 
-2. API-Service: prepares FAST API services to be used for the Frontend REACT web-app. There are 4 primary chatting functions, including one that allows the upload of a csv.
+
+	  **Input:** Documents from GCS Bucket
+	
+	
+	  **Output:** Running Vector DB for use in RAG for LLM
+
+3. API-Service: prepares FAST API services to be used for the Frontend REACT web-app. There are 4 primary chatting functions, including one that allows the upload of a csv.
 
 
 	  **Input:** User inputs and RAG documents from running ChromaDB Instance
@@ -82,7 +89,7 @@ A user friendly React app was built to serve as a chat interface for users tryin
 	  **Output:** Endpoint Responses reflected on front-end. 
 
 
-3. Frontend React: Presents a user-friendly web-app interface to interact with Bloodwise. 
+4. Frontend React: Presents a user-friendly web-app interface to interact with Bloodwise. 
  
 	  **Input:** None
 	
@@ -90,7 +97,7 @@ A user friendly React app was built to serve as a chat interface for users tryin
 	  **Output:** User-friendly application
 
 
-4. DVC: sets-up and runs DVC to ensure proper version control of the data being used. 
+5. DVC: sets-up and runs DVC to ensure proper version control of the data being used. 
 
    	  **Input:** The actual input datasets for LLM and Fine-tuning
 	
