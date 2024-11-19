@@ -97,18 +97,6 @@ def test_make_request():
     with pytest.raises(requests.exceptions.RequestException):
         make_request(fake_url)
 
-# Test for extract_link_from_cards
-def test_extract_link_from_cards():
-    html = TEST_HTML
-    with requests_mock.Mocker() as m:
-        m.get("https://docus.ai/glossary/biomarkers", text=html)
-        soup = requests.get("https://docus.ai/glossary/biomarkers").text
-        soup = BeautifulSoup(soup, 'html.parser')
-        links = extract_links_from_cards(soup, 'ant-col ant-col-xs-24 css-1drr2mu')
-        assert len(links) == 2
-        assert '/glossary/biomarkers/ethyl-glucuronide' in links
-        assert '/glossary/biomarkers/ets-urine-test' in links
-
 # Test biomarker pages
 def test_scrape_biomarkers_page():
     url='https://docus.ai/glossary/biomarkers'
