@@ -13,16 +13,12 @@ This container manages the API functions to initialize the BloodWise AI Chatbot 
 - Make sure that Docker Desktop is enabled and running
 - Run `sh docker-shell.sh`
 
-This will:
-* Scrape the Docus.ai and Cleveland Clinic web sources regarding metabolites
-* Collect links via pagination
-* Store each page in a dictionary
-* Save the collected pages as .txt files in AC215_Bloodwise/scraping/input-datasets folder
-
+## This will:
+* Launch the API endpoints via FastAPI, hosted on a local port. 
+* Allow users to access the API endpoints for testing via their browser.
 
 ## Upload scraped text documents to GCP Bucket
 `uvicorn_server`
 
-This will:
-* Launch the API endpoints via FastAPI, hosted on a local port. 
-* Allow users to access the API endpoints for testing via their browser.
+To test:
+`pytest tests/test_chat_utils.py`
