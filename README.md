@@ -128,25 +128,6 @@ python cli.py --upload
 ```
 
 
-**Fine-tuning LLM**
-```
-*Dataset generation:*
-
-
-python cli.py --generate
-python cli.py --prepare
-python cli.py --upload
-
-
-*Gemini Finetuning:*
-
-
-python cli.py --train
-python cli.py --chat
-
-```
-
-
 **Vector DB**
 ```
 python cli.py --download
@@ -154,6 +135,17 @@ python cli.py --chunk
 python cli.py --embed
 python cli.py --load
 
+```
+
+
+**API Service**
+```
+uvicorn_server
+```
+
+**Frontend React**
+```
+npm run dev
 ```
 
 
@@ -166,3 +158,6 @@ dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --q
 dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --quiet --rev dataset_v1
 
 ```
+
+## Testing Overview
+The containers Vector DB, API Service, and Scraping have pytest and flake 8 linting enabled on them, with subsequent tests located in their local `tests/` folders. Access each readme of the container to understand what is being tested and how to run the tests locally. The CI Workflow and automation of these testing pipelines can be found in `.github/workflows.`
