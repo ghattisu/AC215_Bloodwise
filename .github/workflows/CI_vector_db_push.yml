@@ -3,80 +3,88 @@ name: CI on Vector DB push to Milestone4
 on:
   push:
     branches:
-      - milestone4  # Triggers when code is pushed to the milestone4 branch
+      - milestone4
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository code
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - id: 'auth'
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+    - name: Check out repository
+      uses: actions/checkout@v4
 
-      # Step 2: Set up Python environment (specifically Python 3.12)
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+    - id: 'auth'
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-      # Step 2.1: Set PYTHONPATH to include the root directory (or src if relevant)
-      - name: Set PYTHONPATH
-        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV  # Adds current directory to PYTHONPATH
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
 
-      # Step 3: Install pytest and pytest-cov for coverage
-      - name: Install pytest and pytest-cov
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest pytest-cov flake8 
-          
-      # Step 4: Run Flake8
-      - name: Run Flake8
-        run: flake8 .
+    - name: Cache Docker Compose binary
+      id: docker-compose-cache
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/bin/docker-compose
+        key: docker-compose-${{ runner.os }}
+  
+    - name: Install Docker Compose if not cached
+      if: steps.docker-compose-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
 
-      # Step 2: Set up Docker
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v1
+    - name: Install Pipenv
+      run: pip install pipenv
 
-      # Step 5: Run pytest with coverage and generate HTML report
-      - name: Run tests with coverage
-        run: |
-          cd ${{ github.workspace }}/scraping/
-          docker build -t llm-scraping -f Dockerfile .
+    - name: Install dependencies with Pipenv
+      run: pipenv install 
 
-      - name: Run Test
-        env:
-          GCP_PROJECT: bloodwise-ai
-          GCP_ZONE: us-central1-a
-          GCS_BUCKET_NAME: bloodwise-rag-knowledge-base
-          GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
-          GCP_REGION: us-central1
-          GOOGLE_APPLICATION_CREDENTIALS: /workspace/credentials.json
+    # Install pytest and pytest-cov for coverage
+    - name: Install pytest and pytest-cov
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov flake8 pandas chromadb google-cloud-storage vertexai langchain langchain_community
 
-        run: |
-          docker run --rm \
+    # Create Docker network before starting services
+    - name: Create Docker network
+      run: |
+        docker network inspect bloodwise-network >/dev/null 2>&1 || docker network create bloodwise-network
+        docker network ls
+
+    # Build the local image first
+    - name: Build Docker image
+      run: |
+        cd ${{ github.workspace }}/src/vector-db/
+        docker build -t bloodwise-vector-db-cli -f Dockerfile .
+        docker images
+
+    - name: Build and start services with Docker Compose
+      env:
+        GCP_PROJECT: bloodwise-ai
+        GCP_ZONE: us-central1-a
+        GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
+        GOOGLE_APPLICATION_CREDENTIALS: /workspace/credentials.json
+        GCS_BUCKET_NAME: bloodwise-rag-knowledge-base
+        
+      run: |
+        cd ${{ github.workspace }}/src/vector-db/
+        docker-compose -f docker-compose.yml up -d \
             -v /tmp/credentials.json:/workspace/credentials.json \
             -e GOOGLE_APPLICATION_CREDENTIALS=/workspace/credentials.json \
             -e GCP_PROJECT=${GCP_PROJECT} \
             -e GCP_ZONE=${GCP_ZONE} \
-            -e GCS_BUCKET_NAME=${GCS_BUCKET_NAME} \
             -e GCS_SERVICE_ACCOUNT=${GCS_SERVICE_ACCOUNT} \
-            -e GCP_REGION=${GCP_REGION} \
-            llm-scraping \
-            pytest tests/test_scrape.py -v
+            -e GCS_BUCKET_NAME=${GCS_BUCKET_NAME} 
+        pytest tests/test_db.py -v 
 
-      # Step 6: Upload coverage report as an artifact
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: htmlcov  # The folder where pytest-cov stores HTML reports
-
-
+    - name: Tear down services
+      if: always()
+      run: |
+        cd ${{ github.workspace }}/src/vector-db/
+        docker-compose down
 
 
 
