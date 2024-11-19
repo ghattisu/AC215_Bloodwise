@@ -13,6 +13,7 @@ pandas = "*"
 bs4 = "*"
 requests-mock = "*"
 pytest = "*"
+pytest-cov = "*"
 
 [dev-packages]
 flake8 = "*"
