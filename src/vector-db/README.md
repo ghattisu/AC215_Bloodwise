@@ -75,5 +75,9 @@ This will:
 **Make sure to keep this container running as you launch your API and Frontend Components!**
 
 ## Testing in this container
-For this particular continer, within the `tests/` folder, you will find a test for .....
+To run the pytests for this container, use the command `pytest tests/test_db.py` 
 
+Functions tested: 
+- chunck(): mocks input-data and verify files were read, chuncked, and saved
+- embed(): mocks a chuncked jsonl file, verify the jsonl file were read, embeddings were generated, and embedded file was saved
+- load(): mocks embedded jsonl file and chromadb client and collection, verify the jsonl file were read and items were added to the collection.
