@@ -3,94 +3,78 @@ name: CI on Vector DB push to Milestone4
 on:
   push:
     branches:
-      - milestone4
+      - milestone4  # Triggers when code is pushed to the milestone4 branch
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest-containers
-    
+  test:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      # Step 1: Checkout the repository code
+      - name: Check out repository code
         uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        
-      - name: Cache Docker layers
-        uses: actions/cache@v3
+      - id: 'auth'
+        uses: google-github-actions/auth@v1
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
 
-      # Cache Docker Compose
-      - name: Cache Docker Compose
-        id: docker-compose-cache
-        uses: actions/cache@v3
-        with:
-          path: /usr/local/bin/docker-compose
-          key: ${{ runner.os }}-docker-compose-${{ hashFiles('/usr/local/bin/docker-compose') }}
-
-      # Install Docker Compose if not cached
-      - name: Install Docker Compose if not cached
-        if: steps.docker-compose-cache.outputs.cache-hit != 'true'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
-
-      # Build Docker image
-      - name: Build and cache Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: false
-          load: true
-          tags: myapp:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-
-      # Move cache
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-
-      # Set up Python and cache pip packages
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      # Step 2: Set up Python environment (specifically Python 3.12)
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
-      - name: Cache pip packages
-        uses: actions/cache@v3
+      # Step 2.1: Set PYTHONPATH to include the root directory (or src if relevant)
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV  # Adds current directory to PYTHONPATH
+
+      # Step 3: Install pytest and pytest-cov for coverage
+      - name: Install pytest and pytest-cov
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov flake8 
+          
+      # Step 4: Run Flake8
+      - name: Run Flake8
+        run: flake8 .
+
+      # Step 2: Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1
+
+      # Step 5: Run pytest with coverage and generate HTML report
+      - name: Run tests with coverage
+        run: |
+          cd ${{ github.workspace }}/scraping/
+          docker build -t llm-scraping -f Dockerfile .
+
+      - name: Run Test
+        env:
+          GCP_PROJECT: bloodwise-ai
+          GCP_ZONE: us-central1-a
+          GCS_BUCKET_NAME: bloodwise-rag-knowledge-base
+          GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
+          GCP_REGION: us-central1
+          GOOGLE_APPLICATION_CREDENTIALS: /workspace/credentials.json
+
+        run: |
+          docker run --rm \
+            -v /tmp/credentials.json:/workspace/credentials.json \
+            -e GOOGLE_APPLICATION_CREDENTIALS=/workspace/credentials.json \
+            -e GCP_PROJECT=${GCP_PROJECT} \
+            -e GCP_ZONE=${GCP_ZONE} \
+            -e GCS_BUCKET_NAME=${GCS_BUCKET_NAME} \
+            -e GCS_SERVICE_ACCOUNT=${GCS_SERVICE_ACCOUNT} \
+            -e GCP_REGION=${GCP_REGION} \
+            llm-scraping \
+            pytest tests/test_scrape.py -v
+
+      # Step 6: Upload coverage report as an artifact
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/Pipfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      # Install Pipenv and dependencies
-      - name: Install Pipenv
-        run: pip install pipenv
-
-      - name: Install dependencies with Pipenv
-        run: pipenv install
-
-      # Run services and tests
-      - name: Build and start services with Docker Compose
-        run: docker-compose -f docker-compose.yml up -d
-        working-directory: ./
-
-      - name: Run integration tests
-        run: pipenv run pytest
-        working-directory: ./
-
-      # Cleanup
-      - name: Tear down services
-        if: always()
-        run: docker-compose down
-        working-directory: ./
+          name: coverage-report
+          path: htmlcov  # The folder where pytest-cov stores HTML reports
 
 
 
