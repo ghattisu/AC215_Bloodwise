@@ -54,6 +54,10 @@ jobs:
         docker network inspect bloodwise-network >/dev/null 2>&1 || docker network create bloodwise-network
         docker network ls
 
+    - name: Create credentials file
+      run: |
+        echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > credentials.json
+
     # Build the local image first
     - name: Build Docker image
       run: |
@@ -66,18 +70,13 @@ jobs:
         GCP_PROJECT: bloodwise-ai
         GCP_ZONE: us-central1-a
         GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
-        GOOGLE_APPLICATION_CREDENTIALS: /workspace/credentials.json
         GCS_BUCKET_NAME: bloodwise-rag-knowledge-base
         
       run: |
-        cd ${{ github.workspace }}/src/vector-db/
+        cd ${{ github.workspace }}/src/vector-db/ 
         docker-compose -f docker-compose.yml up -d \
-            -v /tmp/credentials.json:/workspace/credentials.json \
-            -e GOOGLE_APPLICATION_CREDENTIALS=/workspace/credentials.json \
-            -e GCP_PROJECT=${GCP_PROJECT} \
-            -e GCP_ZONE=${GCP_ZONE} \
-            -e GCS_SERVICE_ACCOUNT=${GCS_SERVICE_ACCOUNT} \
-            -e GCS_BUCKET_NAME=${GCS_BUCKET_NAME} 
+          --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/credentials.json \
+          --env GOOGLE_APPLICATION_CREDENTIALS=/secrets/credentials.json 
         pytest tests/test_db.py -v 
 
     - name: Tear down services
