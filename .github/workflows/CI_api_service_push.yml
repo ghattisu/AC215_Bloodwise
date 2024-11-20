@@ -72,7 +72,7 @@ jobs:
         
       run: |
         cd ${{ github.workspace }}/src/api-service/ 
-        docker run --rm \
+        docker run --rm -ti \
           -v /tmp/credentials.json:/workspace/credentials.json \
           -e ML_WORKFLOW=/workspace/credentials.json \
           -p 9000:9000 \
