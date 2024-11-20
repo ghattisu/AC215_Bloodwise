@@ -72,7 +72,7 @@ jobs:
         
       run: |
         cd ${{ github.workspace }}/src/api-service/ 
-        docker run --rm -ti \
+        docker run --rm -it \
           -v /tmp/credentials.json:/workspace/credentials.json \
           -e ML_WORKFLOW=/workspace/credentials.json \
           -p 9000:9000 \
@@ -84,7 +84,8 @@ jobs:
           bloodwise-api-service
           
         pytest tests/test_chat_utils.py --cov=tests --cov-report=html 
-
+        
+      #  -v /tmp/persistent-folder:/workspace/persistent \
       # Step 9: Upload coverage report as an artifact
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
