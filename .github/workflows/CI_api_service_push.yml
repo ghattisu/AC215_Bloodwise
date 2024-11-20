@@ -1,0 +1,94 @@
+name: CI on API push to Milestone4
+
+on:
+  push:
+    branches:
+      - milestone4
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - id: 'auth'
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.ML_WORKFLOW }}'
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Cache Docker Compose binary
+      id: docker-compose-cache
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/bin/docker-compose
+        key: docker-compose-${{ runner.os }}
+  
+    - name: Install Docker Compose if not cached
+      if: steps.docker-compose-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+
+    - name: Install Pipenv
+      run: pip install pipenv
+
+    - name: Install dependencies with Pipenv
+      run: pipenv install 
+
+    # Install pytest and pytest-cov for coverage
+    - name: Install pytest and pytest-cov
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov flake8 
+
+    # Create Docker network before starting services
+    - name: Create Docker network
+      run: |
+        docker network inspect bloodwise-network >/dev/null 2>&1 || docker network create bloodwise-network
+        docker network ls
+
+    - name: Create credentials file
+      run: |
+        echo '${{ secrets.ML_WORKFLOW }}' > credentials.json
+
+    # Build the local image first
+    - name: Build Docker image
+      run: |
+        cd ${{ github.workspace }}/src/api-service/
+        docker build -t bloodwise-api-service --platform=linux/arm64/v8 -f Dockerfile .
+        docker images
+
+    - name: Build and start services with Docker Compose
+      env:
+        GCP_PROJECT: bloodwise-ai
+        
+      run: |
+        cd ${{ github.workspace }}/src/api-service/ 
+        docker run --rm \
+          --mount type=bind,source=$ML_WORKFLOW,target=/secrets/credentials.json \
+          --env ML_WORKFLOW=/secrets/credentials.json 
+          -v /tmp/credentials.json:/secrets/credentials.json \
+          -e ML_WORKFLOW=/secrets/credentials.json \
+          -p 9000:9000 \
+          -e DEV=1 \
+          -e GCP_PROJECT=${GCP_PROJECT} \
+          -e CHROMADB_HOST=bloodwise-vector-db \
+          -e CHROMADB_PORT=8000 \
+          --network bloodwise-network \
+          bloodwise-api-service
+          
+        pytest tests/test_chat_utils.py --cov=tests --cov-report=html 
+
+      # Step 9: Upload coverage report as an artifact
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ${{ github.workspace }}/  # The folder where pytest-cov stores HTML reports
