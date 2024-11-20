@@ -152,6 +152,7 @@ uvicorn_server
 
 **Frontend React**
 ```
+npm install
 npm run dev
 ```
 
