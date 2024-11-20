@@ -77,13 +77,20 @@ jobs:
         docker-compose -f docker-compose.yml up -d \
           --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/credentials.json \
           --env GOOGLE_APPLICATION_CREDENTIALS=/secrets/credentials.json 
-        pytest tests/test_db.py -v 
+        pytest --cov=. --cov-report=html tests/test_db.py -v 
 
     - name: Tear down services
       if: always()
       run: |
         cd ${{ github.workspace }}/src/vector-db/
         docker-compose down
+
+      # Step 9: Upload coverage report as an artifact
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ${{ github.workspace }}/  # The folder where pytest-cov stores HTML reports
 
 
 

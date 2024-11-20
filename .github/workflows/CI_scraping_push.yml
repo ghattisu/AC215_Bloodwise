@@ -79,7 +79,7 @@ jobs:
 
       # Step 9: Upload coverage report as an artifact
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: ${{ github.workspace }}/htmlcov  # The folder where pytest-cov stores HTML reports
+          path: ${{ github.workspace }}/  # The folder where pytest-cov stores HTML reports
