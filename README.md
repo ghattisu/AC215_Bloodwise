@@ -213,10 +213,10 @@ Uploads the test coverage report as an artifact
 
 ##### Accessing Test Coverage Reports
 
-To view the HTML test coverage reports:
-	- Go to GitHub Actions
-	- Select the relevant workflow run
-	- Download the `coverage-report.zip` from the Artifacts section
+**To view the HTML test coverage reports**:
+*  Go to GitHub Actions
+*  Select the relevant workflow run
+*  Download the `coverage-report.zip` from the Artifacts section
 
 Here is the structure of the coverage-report folder for `CI_api_service_push.yml`: 
 ```
