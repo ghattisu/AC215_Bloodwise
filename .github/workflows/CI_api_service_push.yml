@@ -62,7 +62,7 @@ jobs:
     - name: Build Docker image
       run: |
         cd ${{ github.workspace }}/src/api-service/
-        docker build -t bloodwise-api-service --platform=linux/arm64/v8 -f Dockerfile .
+        docker build -t bloodwise-api-service -f Dockerfile .
         docker images
 
     - name: Build and start services with Docker Compose
