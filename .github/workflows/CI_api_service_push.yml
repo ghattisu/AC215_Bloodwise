@@ -73,7 +73,7 @@ jobs:
         cd ${{ github.workspace }}/src/api-service/ 
         docker run --rm \
           --mount type=bind,source=$ML_WORKFLOW,target=/secrets/credentials.json \
-          --env ML_WORKFLOW=/secrets/credentials.json 
+          --env ML_WORKFLOW=/secrets/credentials.json \
           -v /tmp/credentials.json:/secrets/credentials.json \
           -e ML_WORKFLOW=/secrets/credentials.json \
           -p 9000:9000 \
