@@ -166,3 +166,31 @@ dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --q
 
 ## Testing Overview
 The containers Vector DB, API Service, and Scraping have pytest and flake 8 linting enabled on them, with subsequent tests located in their local `tests/` folders. Access each readme of the container to understand what is being tested and how to run the tests locally. The CI Workflow and automation of these testing pipelines can be found in `.github/workflows.`
+
+### Continuous Integration Setup
+The CI action is triggered on any push to the milestone4 branch and executes the following steps:
+1. **Repository Checkout**
+Clones your repo into the GitHub Actions runner 
+2. **Google Cloud Authentication**
+Authenticates with Google Cloud using credentials stored in GitHub secrets:
+	- Go to the repo Settings
+	- Select "Secrets and variable" from the left side menu and select "Actions"
+	- Under "Repository secrets" click "New repository secret"
+	- Give the name to the secret file (e.g., “GOOGLE_APPLICATION_CREDENTIALS")
+	- For the value copy+paste the contents of your secrets file deployment.json
+3. **Python Setup**
+Installs Python on the runner
+4. **Docker Compose Setup** (only for vector db)
+Caches Docker Compose to speed up future runs, installs Docker Compose if not found in cache
+5. **Python Dependencies Installation**
+Installs Pipenv for dependency management and project dependencies from Pipfile
+6. **Code Quality Check / Linting (Flake8)**
+Runs Flake8 for code style checking
+7. **Docker Setup**
+	- **Network Creation** (vector db & api service): Creates a Docker network named 'bloodwise-network' if it doesn't exist
+	- **Credentials Setup**: Creates a credentials file from the secret
+	- **Docker Image Build**: Builds the Docker image
+8. **Deployment and Testing**
+Runs pytest with coverage reporting in Docker container, 
+9. **Coverage Report**
+Uploads the test coverage report as an artifact
