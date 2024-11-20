@@ -65,17 +65,16 @@ jobs:
         docker build -t bloodwise-api-service -f Dockerfile .
         docker images
 
-    - name: Build and start services with Docker Compose
+    - name: Build and start api services
       env:
         GCP_PROJECT: bloodwise-ai
+        ML_WORKFLOW: /workspace/credentials.json
         
       run: |
         cd ${{ github.workspace }}/src/api-service/ 
         docker run --rm \
-          --mount type=bind,source=$ML_WORKFLOW,target=/secrets/credentials.json \
-          --env ML_WORKFLOW=/secrets/credentials.json \
-          -v /tmp/credentials.json:/secrets/credentials.json \
-          -e ML_WORKFLOW=/secrets/credentials.json \
+          -v /tmp/credentials.json:/workspace/credentials.json \
+          -e ML_WORKFLOW=/workspace/credentials.json \
           -p 9000:9000 \
           -e DEV=1 \
           -e GCP_PROJECT=${GCP_PROJECT} \
