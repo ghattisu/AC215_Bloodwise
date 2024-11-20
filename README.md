@@ -14,7 +14,7 @@
 │   ├── scraping
 │   ├── vector-db
 ├── .github/workflows
-├── .flask8
+├── .flake8
 ├── .gitignore
 ├── secrets
 ```
@@ -80,7 +80,7 @@ A user friendly React app was built to serve as a chat interface for users tryin
 	
 	  **Output:** Running Vector DB for use in RAG for LLM
 
-3. API-Service: prepares FAST API services to be used for the Frontend REACT web-app. There are 4 primary chatting functions, including one that allows the upload of a csv.
+3. API-Service: prepares REST API services to be used for the Frontend REACT web-app. There are 4 primary chatting functions, including one that allows the upload of a csv.
 
 
 	  **Input:** User inputs and RAG documents from running ChromaDB Instance
@@ -112,9 +112,6 @@ A user friendly React app was built to serve as a chat interface for users tryin
 
 
 ## Data Containers Overview
-
-
-Here is a visual of our data pipeline: 
 
 Since each section is containerized, please access the readme’s of each subfolder to run each container:
 1. [Scraping](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone4/src/scraping)
@@ -152,6 +149,7 @@ uvicorn_server
 
 **Frontend React**
 ```
+npm install
 npm run dev
 ```
 

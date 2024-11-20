@@ -32,5 +32,18 @@ Fast API gives us an interactive API documentation and exploration tool for free
 - Go to `http://localhost:9000/docs`
 - You can test APIs from this tool
 
-To test:
-`pytest tests/test_chat_utils.py`
+## Testing for this container
+To run the pytests for this container, use the command `pytest tests/test_chat_utils.py` 
+
+Initial setup:
+- There is a mock ChatHistoryManager and a mock Chat message that are used to replicate what it would be like to retrieve previous chats and saving off a current chat using the various endpoints. The mock ChatHistoryManager has instances of previous chats to be used for testing and the mock Chat message mimics a real chat that would also test the functionalities of the API.
+
+Functions tested:
+- test_ensure_directories(): tests to make sure the the history and files (saving csv files) directory exists 
+- test_save_chat(): uses the mock Chat message to see if a current chat can be saved
+- test_get_chat(): uses the mock Chat message to see if a previous chat can be returned using its session-id
+- test_get_recent_chats(): returns all the recent chats 
+- test_save_file(): tests to make sure that uploaded csv's are saved off
+- test_load_file(): uses mock ChatHistoryManager to retrieve previously saved off csv files using both the chat-id and message-id
+
+**NOTE: Due to the inability to mock up connecting to VertexAI, we were unable to write tests for our fine-tuned LLM functionalities**

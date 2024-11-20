@@ -28,7 +28,7 @@ Your folder structure should look like this:
 │   ├── scraping
 │   ├── vector-db
 ├── .github/workflows
-├── .flask8
+├── .flake8
 ├── .gitignore
 ├── secrets
 
