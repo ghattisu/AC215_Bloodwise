@@ -48,6 +48,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest pytest-cov flake8 pandas chromadb google-cloud-storage vertexai langchain langchain_community
 
+    # Step 5: Run Flake8
+    - name: Run Flake8
+      run: flake8 .
+
     # Create Docker network before starting services
     - name: Create Docker network
       run: |
