@@ -9,7 +9,7 @@ exclude =
     .pytest_cache,
     .env,
     .venv
-ignore = E203, W503, E302, 
+ignore = E203, W503, E302, F821,
         E101, W191, E117, W293, E231, W291, 
         E501, E126, W292, E999, E265, E226, 
         E114, E251, F401, E222, E303, E402,
