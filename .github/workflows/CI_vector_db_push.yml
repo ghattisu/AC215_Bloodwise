@@ -77,7 +77,7 @@ jobs:
         docker-compose -f docker-compose.yml up -d \
           --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/credentials.json \
           --env GOOGLE_APPLICATION_CREDENTIALS=/secrets/credentials.json 
-        pytest tests/test_db.py --cov=/tests/ --cov-report=html 
+        pytest tests/test_db.py --cov=tests --cov-report=html 
 
     - name: Tear down services
       if: always()
