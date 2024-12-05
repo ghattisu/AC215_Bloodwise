@@ -3,7 +3,7 @@ from typing import Dict, Any, List, Optional
 from fastapi import HTTPException
 import base64
 import io
-from PIL import Image
+# from PIL import Image
 from pathlib import Path
 import traceback
 import chromadb
