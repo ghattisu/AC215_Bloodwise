@@ -93,8 +93,8 @@ jobs:
           --network bloodwise-network \
           bloodwise-api-service
           
-        pipenv run pytest tests/test_chat_utils.py --cov=tests --cov-report=html
-        pipenv run pytest tests/test_llm_rag_utils.py --cov=tests --cov-report=html 
+        docker exec bloodwise-api-service pipenv run pytest tests/test_chat_utils.py --cov=tests --cov-report=html
+        docker exec bloodwise-api-service pipenv run pytest tests/test_llm_rag_utils.py --cov=tests --cov-report=html  
         
       #  -v /tmp/persistent-folder:/workspace/persistent \
       # Step 9: Upload coverage report as an artifact
