@@ -73,7 +73,8 @@ jobs:
     - name: Run chromadb docker-shell.sh
       run: |
         cd ${{ github.workspace }}/src/vector-db/
-        docker-compose up -d --build
+        chmod +x ${{ github.workspace }}/src/vector-db/docker-shell.sh
+        ${{ github.workspace }}/src/vector-db/docker-shell.sh
 
     - name: Build and start api services
       env:
@@ -83,7 +84,6 @@ jobs:
       run: |
         cd ${{ github.workspace }}/src/api-service/ 
         docker run --rm -d \
-          --name bloodwise-api-service-container \
           -v /tmp/credentials.json:/workspace/credentials.json \
           -e ML_WORKFLOW=/workspace/credentials.json \
           -p 9000:9000 \
@@ -94,8 +94,8 @@ jobs:
           --network bloodwise-network \
           bloodwise-api-service
           
-        docker exec bloodwise-api-service-container pipenv run pytest tests/test_chat_utils.py --cov=tests --cov-report=html
-        docker exec bloodwise-api-service-container pipenv run pytest tests/test_llm_rag_utils.py --cov=tests --cov-report=html 
+        pipenv run pytest tests/test_chat_utils.py --cov=tests --cov-report=html
+        pipenv run pytest tests/test_llm_rag_utils.py --cov=tests --cov-report=html 
   
       #  -v /tmp/persistent-folder:/workspace/persistent \
       # Step 9: Upload coverage report as an artifact
