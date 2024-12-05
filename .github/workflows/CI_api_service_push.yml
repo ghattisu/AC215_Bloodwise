@@ -69,19 +69,16 @@ jobs:
         docker build -t bloodwise-api-service -f Dockerfile .
         docker images
 
-    # Build and start services using docker-shell.sh
-    - name: Run chromadb docker-shell.sh
-      run: |
-        cd ${{ github.workspace }}/src/vector-db/
-        chmod +x ${{ github.workspace }}/src/vector-db/docker-shell.sh
-        ${{ github.workspace }}/src/vector-db/docker-shell.sh
-
     - name: Build and start api services
       env:
         GCP_PROJECT: bloodwise-ai
         ML_WORKFLOW: /workspace/credentials.json
         
       run: |
+        cd ${{ github.workspace }}/src/vector-db/
+        chmod +x ${{ github.workspace }}/src/vector-db/docker-shell.sh
+        ${{ github.workspace }}/src/vector-db/docker-shell.sh
+        
         cd ${{ github.workspace }}/src/api-service/ 
         docker run --rm -d \
           -v /tmp/credentials.json:/workspace/credentials.json \
