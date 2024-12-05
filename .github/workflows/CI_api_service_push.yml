@@ -73,8 +73,7 @@ jobs:
     - name: Run chromadb docker-shell.sh
       run: |
         cd ${{ github.workspace }}/src/vector-db/
-        chmod +x ${{ github.workspace }}/src/vector-db/docker-shell.sh
-        ${{ github.workspace }}/src/vector-db/docker-shell.sh
+        docker-compose up -d --build
 
     - name: Build and start api services
       env:
