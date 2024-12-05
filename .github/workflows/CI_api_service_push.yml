@@ -72,6 +72,7 @@ jobs:
     # Build and start services using docker-shell.sh
     - name: Run chromadb docker-shell.sh
       run: |
+        cd ${{ github.workspace }}/src/vector-db/
         chmod +x ${{ github.workspace }}/src/vector-db/docker-shell.sh
         ${{ github.workspace }}/src/vector-db/docker-shell.sh
 
