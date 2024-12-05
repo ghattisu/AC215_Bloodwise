@@ -76,6 +76,12 @@ jobs:
         
       run: |
         cd ${{ github.workspace }}/src/api-service/ 
+        docker network inspect bloodwise-network >/dev/null 2>&1 || docker network create bloodwise-network
+        
+        # Run chromadb container
+        docker build -t bloodwise-vector-db-cli -f Dockerfile .
+        docker-compose run --rm --service-ports bloodwise-vector-db-cli
+
         docker run --rm -d \
           -v /tmp/credentials.json:/workspace/credentials.json \
           -e ML_WORKFLOW=/workspace/credentials.json \
@@ -87,7 +93,8 @@ jobs:
           --network bloodwise-network \
           bloodwise-api-service
           
-        pytest tests/test_chat_utils.py --cov=tests --cov-report=html 
+        pytest tests/test_chat_utils.py --cov=tests --cov-report=html
+        pytest tests/test_llm_rag_utils.py --cov=tests --cov-report=html 
         
       #  -v /tmp/persistent-folder:/workspace/persistent \
       # Step 9: Upload coverage report as an artifact
