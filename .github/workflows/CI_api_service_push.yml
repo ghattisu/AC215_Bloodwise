@@ -16,7 +16,7 @@ jobs:
     - id: 'auth'
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: '${{ secrets.ML_WORKFLOW }}'
+        credentials1_json: '${{ secrets.ML_WORKFLOW }}'
         credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
 
     - name: Set up Python
@@ -61,7 +61,7 @@ jobs:
 
     - name: Create credentials file
       run: |
-        echo '${{ secrets.ML_WORKFLOW }}' > credentials.json
+        echo '${{ secrets.ML_WORKFLOW }}' > credentials1.json
         echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > credentials.json
 
     # Build the local image first
@@ -78,7 +78,7 @@ jobs:
     - name: Build and start api services
       env:
         GCP_PROJECT: bloodwise-ai
-        ML_WORKFLOW: /workspace/credentials.json
+        ML_WORKFLOW: /workspace/credentials1.json
         GCP_ZONE: us-central1-a
         GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
         GCS_BUCKET_NAME: bloodwise-rag-knowledge-base
@@ -91,8 +91,8 @@ jobs:
 
         cd ${{ github.workspace }}/src/api-service/ 
         docker run --rm -d \
-          -v /tmp/credentials.json:/workspace/credentials.json \
-          -e ML_WORKFLOW=/workspace/credentials.json \
+          -v /tmp/credentials1.json:/workspace/credentials1.json \
+          -e ML_WORKFLOW=/workspace/credentials1.json \
           -p 9000:9000 \
           -e DEV=1 \
           -e GCP_PROJECT=${GCP_PROJECT} \
