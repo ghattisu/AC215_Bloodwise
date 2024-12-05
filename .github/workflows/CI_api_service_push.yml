@@ -75,13 +75,14 @@ jobs:
         ML_WORKFLOW: /workspace/credentials.json
         
       run: |
-        cd ${{ github.workspace }}/src/api-service/ 
+        cd ${{ github.workspace }}/src/vector-db
         docker network inspect bloodwise-network >/dev/null 2>&1 || docker network create bloodwise-network
         
-        # Run chromadb container
+      # Run chromadb container
         docker build -t bloodwise-vector-db-cli -f Dockerfile .
         docker-compose run --rm --service-ports bloodwise-vector-db-cli
 
+        cd ${{ github.workspace }}/src/api-service/ 
         docker run --rm -d \
           -v /tmp/credentials.json:/workspace/credentials.json \
           -e ML_WORKFLOW=/workspace/credentials.json \
