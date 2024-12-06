@@ -88,6 +88,7 @@ jobs:
         docker-compose -f docker-compose.yml up -d \
           --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/credentials.json \
           --env GOOGLE_APPLICATION_CREDENTIALS=/secrets/credentials.json 
+        sh docker-shell.sh
 
         cd ${{ github.workspace }}/src/api-service/ 
         docker run --rm -d \
