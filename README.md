@@ -177,8 +177,6 @@ The CI process is triggered in either of these scenarios:
 1. The commit message includes `/deploy-app`
 2. Code is pushed to the `main` branch
 
-![Example CI Integration Tests](./images/CIimage.jpg)
-Evidence of the int_tests/test_test.py integration tests running locally. 
 
 #### 1. Deploying with /deploy-app ####
 To trigger the deploy app action, add `/deploy-app` to your commit message when working outside the container. 
@@ -202,6 +200,9 @@ When code is pushed to the `main` branch, three separate workflow files handle d
 	- `CI_api_service_push.yml`: Handles automated builds, tests, and code quality checks for the api-service component
 	- `CI_scraping_push.yml`: Manages automated builds, tests, and code quality checks for the scraping component
 	- `CI_vector_db_push.yml`: Controls automated builds, tests, and code quality checks for the vector-db component
+
+ ![Example CI Integration Tests](./images/CIimage.jpg)
+Evidence of the int_tests/test_test.py integration tests running locally, as they would inside `CI_api_service_push.yml`. 
 
 For each workflow files: 
 1. **Repository Checkout**:
