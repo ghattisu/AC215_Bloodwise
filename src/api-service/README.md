@@ -40,7 +40,7 @@ Fast API gives us an interactive API documentation and exploration tool for free
 
 
 ## Testing for this container
-To run the pytests for this container, use the command `pytest tests/test_chat_utils.py` and for integration tests, `python int_tests/test_test.py`
+To run the pytests for this container, use the command `pytest tests/test_chat_utils.py` and for integration tests, `python int_tests/test_test.py`. This test is an integration test that ensure proper API connection, ChromaDB instantiation, and connection to Vertex AI Gemini.
 
 ![CI int test](../../images/CIimage.jpg)
 Example of the integration tests running locally.
@@ -55,5 +55,3 @@ Functions tested:
 - test_get_recent_chats(): returns all the recent chats 
 - test_save_file(): tests to make sure that uploaded csv's are saved off
 - test_load_file(): uses mock ChatHistoryManager to retrieve previously saved off csv files using both the chat-id and message-id
-
-**NOTE: Due to the inability to mock up connecting to VertexAI, we were unable to write tests for our fine-tuned LLM functionalities**
