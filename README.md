@@ -130,7 +130,7 @@ dvc get https://github.com/ghattisu/AC215_Bloodwise.git dvc/datasets --force --q
 ```
 
 ### Important Note on Containers
-We have also included our fine-tuning methodology in `src/fine-tuning` if you would like to try and experiment with Q&A dataset creation and fine-tuning! We do not use the fine-tuned model for our final purposes, since the perfirmance was equivalent to base gemini.
+We have also included our fine-tuning methodology in `src/fine-tuning` if you would like to try and experiment with Q&A dataset creation and fine-tuning! We do not use the fine-tuned model for our final purposes, since the performance was equivalent to base gemini.
 
 Here is a summary on how to fine-tune: 
 
