@@ -120,15 +120,25 @@ The username is `sa_100110341521630214262`
 
 ### Deployment
 
-### Build and Push Docker Containers to GCR (Google Container Registry)
+### Build and Push Docker Containers to GCR (Google Artifact Registry)
 ```
 ansible-playbook deploy-docker-images-app.yml -i inventory.yml
 ```
+
+You can view your pushed images in [Google Artifact Registry](https://console.cloud.google.com/artifacts/docker/bloodwise-ai/us/gcr.io?authuser=2&hl=en&project=bloodwise-ai)
+![artifact](https://github.com/ghattisu/AC215_Bloodwise/blob/main/src/deployment/images/artifact_registry.png)
 
 ### Create & Deploy Cluster
 ```
 ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
 ```
+
+If this is successful, you should see this in your terminal:
+
+![docker](https://github.com/ghattisu/AC215_Bloodwise/blob/main/src/deployment/images/successful_run.png)
+
+And when you go to [GCP Clusters](https://console.cloud.google.com/kubernetes/list/overview?referrer=search&authuser=2&hl=en&project=bloodwise-ai), you should see:
+![node_deployment](https://github.com/ghattisu/AC215_Bloodwise/blob/main/src/deployment/images/node_deplyment.png)
 
 Here is how the various services communicate between each other in the Kubernetes cluster.
 
@@ -188,7 +198,10 @@ kubectl exec --stdin --tty api-5d4878c545-47754 --namespace=bloodwise-cluster-na
 * Copy the `nginx_ingress_ip` from the terminal from the create cluster command
 * Go to `http://<YOUR INGRESS IP>.sslip.io`
 
-* Example: http://35.231.159.32.sslip.io/
+* Example: http://34.56.18.100.sslip.io/
+
+Here is a preview of the launched application:
+![frontend](https://github.com/ghattisu/AC215_Bloodwise/blob/main/src/deployment/images/frontend_deployment.png)
 
 <hr style="height:4px;border-width:0;color:gray;background-color:gray">
 
