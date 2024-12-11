@@ -1,12 +1,12 @@
 name: Continuous Integration and Continuous Deployment
-
+run-name: ${{ github.actor }} submitted a CI CD Action
 on:
   push:
-    branches:
-        - milestone5
+    branches: main
 
 jobs:
   Explore-GitHub-Actions:
+    if: contains(github.event.head_commit.message, '/deploy-app')
     runs-on: ubuntu-latest
     steps:
       - run: echo "Comment ${{ github.event.head_commit.message }}"
@@ -15,17 +15,12 @@ jobs:
       - run: echo "Branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v4
-
       - id: 'auth'
         uses: google-github-actions/auth@v1
         with:
-          credentials_json: '${{ secrets.Deployment }}'
-
+          credentials_json: '${{ secrets.DEPLOYMENT }}'
       - name: Configure Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
-        with:
-          project_id: bloodwise-ai
-
       - name: Configure Docker Client
         run: |-
           gcloud auth configure-docker # --quiet #authenticate to gcr
@@ -39,11 +34,6 @@ jobs:
           cd ${{ github.workspace }}/src/deployment/
           docker build -t bloodwise-app-deployment -f Dockerfile .
 
-      - name: Create credentials directory and file
-        run: |
-            mkdir -p ${{ github.workspace }}/credentials
-            echo '${{ secrets.Deployment }}' > ${{ github.workspace }}/credentials/deployment.json
-
       - name: Run Deploy App
         run: |-
           docker run --rm --name bloodwise-app-deployment \
@@ -53,9 +43,9 @@ jobs:
             -v ${{ github.workspace }}/src/frontend-react:/frontend-react \
             -v ${{ github.workspace }}/src/vector-db:/vector-db \
             --volume $GITHUB_WORKSPACE:/workspace \
-            -v ${{ github.workspace }}/credentials:/credentials \
-            -e Deployment=/credentials/deployment.json \
+            --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/deployment.json \
+            --env GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json \
             -e USE_GKE_GCLOUD_AUTH_PLUGIN=True \
             -e GCP_PROJECT=bloodwise-ai \
             -e GCP_ZONE=us-central1-a \
-            bloodwise-app-deployment bash deploy-k8s-update.sh
+            bloodwise-app-deployment sh deploy-k8s-update.sh

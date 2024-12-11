@@ -3,7 +3,7 @@ name: CI on Scraping push to Milestone5
 on:
   push:
     branches:
-      - milestone  # Triggers when code is pushed to the milestone4 branch
+      - main  # Triggers when code is pushed to the main branch
 
 jobs:
   test:

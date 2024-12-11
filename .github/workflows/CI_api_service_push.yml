@@ -3,7 +3,7 @@ name: CI on API push to Milestone5
 on:
   push:
     branches:
-      - milestone
+      - main
 
 jobs:
   test:
