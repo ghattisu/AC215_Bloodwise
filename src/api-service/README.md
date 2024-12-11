@@ -55,3 +55,6 @@ Functions tested:
 - test_get_recent_chats(): returns all the recent chats 
 - test_save_file(): tests to make sure that uploaded csv's are saved off
 - test_load_file(): uses mock ChatHistoryManager to retrieve previously saved off csv files using both the chat-id and message-id
+- test_start_chat_with_llm(): API service connects to ChromaDB and attempts to start a new LLM chat
+- test_continue_chat_with_llm(): with an existing chat ID, tests if the API service is capable of retrieving previous chats and continuing them
+- test_get_chat_file(): tests if the API service is capable of receiving and processing files with a mock csv
