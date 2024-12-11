@@ -177,13 +177,12 @@ The CI process is triggered in either of these scenarios:
 2. Code is pushed to the `main` branch
 
 #### 1. Deploying with /deploy-app ####
-To trigger the deploy app action, add `/deploy-app` to your commit message when working outside the container.
+To trigger the deploy app action, add `/deploy-app` to your commit message when working outside the container. 
 
-1. **`/deploy-app` is included in the git commit message** 
-To run the deploy app action, add the following to code commit comment:
-**Do this outside the container**
-Add `/deploy-app` to the commit message to re-deploy the frontend and backend 
+In the `app-ci-cd-gcp.yml` file, we first build and run a deployment container, mount necessary code directories and credentials, and execute the Kubernetes deployment script. This will redeploy both frontend and backend components.
 
+
+Example:
 ```
 git commit -m "XXX /deploy-app"
 ```
