@@ -1,0 +1,90 @@
+/* Sidebar */
+.sidebar {
+    /* width: 300px; */
+    background: #FAF3EE;
+    border-right: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.sidebarHeader {
+    padding: 20px;
+    border-bottom: 1px solid #FAF3EE;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sidebarHeader h2 {
+    font-size: 18px;
+    font-weight: normal;
+    color: black;
+}
+
+.newChatButton {
+    background: #F7EDE5;
+    border: none;
+    /* color: white; */
+    color: black;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.newChatButton:hover {
+    background: #f0dcce;
+}
+
+.chatList {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.chatItem {
+    padding: 10px 20px;
+    border-bottom: 1px solid #444;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    /* color: white; */
+    color: black;
+}
+
+.chatItem:hover {
+    background: #F7EDE5;
+}
+
+.chatItem.active {
+    background: #f0dcce;
+}
+
+.chatItemContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.chatTitle {
+    font-size: 14px;
+    margin-bottom: 6px;
+    /* color: white; */
+    color: black;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 2.8em;
+    /* Approximately 2 lines of text */
+}
+
+.chatMeta {
+    display: flex;
+    gap: 8px;
+    font-size: 12px;
+    color: #858585;
+}
+
+.chatDate {
+    font-size: 10px;
+    color: #858585;
+}

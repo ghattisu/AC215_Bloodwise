@@ -1,0 +1,149 @@
+name: CI on API push to Milestone5
+
+on:
+  push:
+    branches:
+      - milestone
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - id: 'auth'
+      uses: google-github-actions/auth@v1
+      with:
+        credentials1_json: '${{ secrets.ML_WORKFLOW }}'
+        credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Cache Docker Compose binary
+      id: docker-compose-cache
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/bin/docker-compose
+        key: docker-compose-${{ runner.os }}
+  
+    - name: Install Docker Compose if not cached
+      if: steps.docker-compose-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+
+    - name: Install Pipenv
+      run: pip install pipenv
+
+    - name: Install dependencies with Pipenv
+      run: pipenv install 
+
+    # Install pytest and pytest-cov for coverage
+    - name: Install pytest and pytest-cov
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov flake8 pandas chromadb google-cloud-storage vertexai langchain langchain_community
+
+    # Step 5: Run Flake8
+    - name: Run Flake8
+      run: flake8 .
+
+    # Create Docker network before starting services
+    - name: Create Docker network
+      run: |
+        docker network inspect bloodwise-network >/dev/null 2>&1 || docker network create bloodwise-network
+        docker network ls
+
+    - name: Create credentials file
+      run: |
+        mkdir -p ${{ github.workspace }}/credentials
+        echo '${{ secrets.ML_WORKFLOW }}' > ${{ github.workspace }}/credentials/credentials1.json
+        echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > ${{ github.workspace }}/credentials/credentials.json
+
+    # Build the local image firstt
+    - name: Build Docker image
+      run: |
+        cd ${{ github.workspace }}/src/api-service/
+        docker build -t bloodwise-api-service -f Dockerfile .
+        docker images
+        
+        cd ${{ github.workspace }}/src/vector-db/
+        docker build -t bloodwise-vector-db-cli -f Dockerfile .
+        docker images
+        
+    - name: Build and start api services
+      env:
+          GCP_PROJECT: bloodwise-ai
+          ML_WORKFLOW: ${{ github.workspace }}/credentials/credentials1.json
+          GCP_ZONE: us-central1-a
+          GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
+          GCS_BUCKET_NAME: bloodwise-embeddings
+          CHROMADB_HOST: bloodwise-vector-db
+          CHROMADB_PORT: 8000
+          network: bloodwise-network
+
+      run: |
+        cd ${{ github.workspace }}/src/vector-db/ 
+        sudo chmod -R o+rwx /home/runner/work/AC215_Bloodwise/AC215_Bloodwise/src/vector-db/
+        docker-compose up -d --rm \
+          -v ${{ github.workspace }}/credentials:/credentials.json \
+          -e GOOGLE_APPLICATION_CREDENTIALS=/credentials/credentials.json \
+          -e CHROMADB_HOST=bloodwise-vector-db \
+          -e CHROMADB_PORT=8000 \
+          -e GCP_PROJECT=${GCP_PROJECT} \
+          --network bloodwise-network \
+          bloodwise-vector-db-cli bloodwise-vector-db
+
+        cd ${{ github.workspace }}/src/api-service/ 
+        docker run --rm -d \
+          -v ${{ github.workspace }}/credentials:/credentials1.json \
+          -e ML_WORKFLOW=${{ github.workspace }}/credentials/credentials1.json \
+          -p 9000:9000 \
+          -e DEV=0 \
+          -e GCP_PROJECT=${GCP_PROJECT} \
+          -e CHROMADB_HOST=bloodwise-vector-db \
+          -e CHROMADB_PORT=8000 \
+          --network bloodwise-network \
+          bloodwise-api-service \
+          chmod +x ./docker-entrypoint.sh && /bin/bash ./docker-entrypoint.sh
+
+          pytest tests/test_chat_utils.py --cov=tests --cov-report=html
+          python int_tests/test_test.py
+
+    # - name: Build and start vector-db
+    #   env:
+    #     GCP_PROJECT: bloodwise-ai
+    #     GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/credentials/credentials.json
+    #     GCP_ZONE: us-central1-a
+    #     GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
+    #     GCS_BUCKET_NAME: bloodwise-embeddings
+    #     CHROMADB_HOST: bloodwise-vector-db
+    #     CHROMADB_PORT: 8000
+            
+    #   run: |
+    #       cd ${{ github.workspace }}/src/vector-db/ 
+    #       sudo chmod -R o+rwx /home/runner/work/AC215_Bloodwise/AC215_Bloodwise/src/vector-db/
+    #       docker-compose run --rm --service-ports \
+    #         -v ${{ github.workspace }}/credentials:/credentials \
+    #         -e GOOGLE_APPLICATION_CREDENTIALS=/credentials/credentials.json \
+    #         -e CHROMADB_HOST=bloodwise-vector-db \
+    #         -e CHROMADB_PORT=8000 \
+    #         -e GCP_PROJECT=${GCP_PROJECT} \
+    #       bloodwise-vector-db-cli 
+    #       python int_tests/test_test.py
+
+        # Ensure uvicorn server is running
+        
+  
+      #  -v /tmp/persistent-folder:/workspace/persistent \
+      # Step 9: Upload coverage report as an artifact
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ${{ github.workspace }}/  # The folder where pytest-cov stores HTML reports
