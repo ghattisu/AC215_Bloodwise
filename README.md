@@ -19,6 +19,7 @@ The goal of this project is to develop an application that provides users with e
 │   ├── dvc
 │   ├── deploymnent
 │   ├── frontend-react
+│   ├── fine-tuning
 │   ├── scraping
 │   ├── vector-db
 ├── .github/workflows
