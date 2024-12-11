@@ -17,22 +17,21 @@ In this container, we prepared a set of text documents for the RAG knowledge bas
 - Click the button "ADD Key (Create New Key)" and Select "JSON". This will download a private key JSON file to your computer. 
 - Copy this JSON file into the **secrets** folder and rename it to `llm-service-account.json`.
 
-Your folder structure should look like this:
-
+Your folder structure should look like:
 ```
-├── Readme.md
-├── src
-│   ├── api-service
-│   ├── dvc
-│   ├── deployment
-│   ├── frontend-react
-│   ├── scraping
-│   ├── vector-db
-├── .github/workflows
-├── .flake8
-├── .gitignore
-├── secrets
-
+    ├── Readme.md
+    ├── images
+    ├── src
+    │   ├── api-service
+    │   ├── dvc
+    │   ├── frontend-react
+    │   ├── scraping
+    │   ├── vector-db
+    │   ├── fine=tuning
+    ├── .github/workflows
+    ├── .flask8
+    ├── .gitignore
+    ├── secrets
 ```
 
 ## Run LLM RAG Container
