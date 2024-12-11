@@ -20,15 +20,21 @@ In this container, we will be fine-tuning the gemini-1.5-flash-002 model from Ve
 - Click the button "ADD Key (Create New Key)" and Select "JSON". This will download a private key JSON file to your computer. 
 - Copy this JSON file into the **secrets** folder and rename it to `llm-service-account.json`.
 
-Your folder structure should look like this:
-
+Your folder structure should look like:
 ```
-    |-AC215_BLOODWISE
-        |-llm
-        |-fine-tuning
-        |-scraping
-        |-dvc
-        |-secrets
+    ├── Readme.md
+    ├── images
+    ├── src
+    │   ├── api-service
+    │   ├── dvc
+    │   ├── frontend-react
+    │   ├── scraping
+    │   ├── vector-db
+    │   ├── fine=tuning
+    ├── .github/workflows
+    ├── .flask8
+    ├── .gitignore
+    ├── secrets
 ```
 
 ## Run LLM RAG Container
