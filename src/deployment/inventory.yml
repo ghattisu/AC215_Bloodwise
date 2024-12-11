@@ -1,0 +1,22 @@
+all:
+    vars:
+      ansible_user: surabhi_ghatti_g_harvard_edu
+      ansible_ssh_private_key_file: "../../secrets/ssh-key-deployment"
+      gcp_service_account_file: "../../secrets/deployment.json"
+      gcp_service_account_email: "deployment@bloodwise-ai.iam.gserviceaccount.com"
+      gcp_auth_kind: "serviceaccount"
+      gcp_scopes: "https://www.googleapis.com/auth/compute"
+      gcp_project: "bloodwise-ai"
+      gcp_region: "us-central1"
+      gcp_zone: "us-central1-c"
+      docker_network_name: "bloodwise-network"
+      persistent_disk_name: "bloodwise-app-disk"
+      persistent_disk_size: 50
+      machine_instance_name: "bloodwise-app"
+      machine_type: "n2d-standard-2"
+      machine_disk_size: 50
+
+    children:
+        appserver:
+            hosts:
+                34.23.113.205:

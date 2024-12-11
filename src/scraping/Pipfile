@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+user-agent = "*"
+requests = "*"
+google-cloud-storage = "*"
+google-generativeai = "*"
+google-cloud-aiplatform = "*"
+pandas = "*"
+bs4 = "*"
+requests-mock = "*"
+pytest = "*"
+pytest-cov = "*"
+langchain = "*"
+langchain-community = "*"
+vertexai = "*"
+
+[dev-packages]
+flake8 = "*"
+
+[requires]
+python_version = "3.9"

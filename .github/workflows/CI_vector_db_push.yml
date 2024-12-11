@@ -1,0 +1,101 @@
+name: CI on Vector DB push to Milestone5
+
+on:
+  push:
+    branches:
+      - milestone
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+
+    - id: 'auth'
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}'
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Cache Docker Compose binary
+      id: docker-compose-cache
+      uses: actions/cache@v3
+      with:
+        path: /usr/local/bin/docker-compose
+        key: docker-compose-${{ runner.os }}
+  
+    - name: Install Docker Compose if not cached
+      if: steps.docker-compose-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+
+    - name: Install Pipenv
+      run: pip install pipenv
+
+    - name: Install dependencies with Pipenv
+      run: pipenv install 
+
+    # Install pytest and pytest-cov for coverage
+    - name: Install pytest and pytest-cov
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov flake8 pandas chromadb google-cloud-storage vertexai langchain langchain_community
+
+    # Create Docker network before starting services
+    - name: Create Docker network
+      run: |
+        docker network inspect bloodwise-network >/dev/null 2>&1 || docker network create bloodwise-network
+        docker network ls
+
+    - name: Create credentials file
+      run: |
+        echo '${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}' > credentials.json
+
+    # Build the local image first
+    - name: Build Docker image
+      run: |
+        cd ${{ github.workspace }}/src/vector-db/
+        docker build -t bloodwise-vector-db-cli -f Dockerfile .
+        docker images
+
+    - name: Build and start services with Docker Compose
+      env:
+        GCP_PROJECT: bloodwise-ai
+        GCP_ZONE: us-central1-a
+        GCS_SERVICE_ACCOUNT: llm-service-account@bloodwise-ai.iam.gserviceaccount.com
+        GCS_BUCKET_NAME: bloodwise-embeddings
+        CHROMADB_HOST: bloodwise-vector-db
+        
+      run: |
+        cd ${{ github.workspace }}/src/vector-db/ 
+        docker-compose -f docker-compose.yml up -d \
+          --mount type=bind,source=$GOOGLE_APPLICATION_CREDENTIALS,target=/secrets/credentials.json \
+          --env GOOGLE_APPLICATION_CREDENTIALS=/secrets/credentials.json 
+        pytest tests/test_db.py --cov=tests --cov-report=html 
+
+    - name: Tear down services
+      if: always()
+      run: |
+        cd ${{ github.workspace }}/src/vector-db/
+        docker-compose down
+
+      # Step 9: Upload coverage report as an artifact
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ${{ github.workspace }}/  # The folder where pytest-cov stores HTML reports
+
+
+
+
+
+
+            
