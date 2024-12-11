@@ -53,9 +53,6 @@ This will:
 * Creates a new collection (or clears an existing one)
 * Loads the embeddings and associated metadata into the collection
 
-## (shortcut) chunking -> embedding -> loading the vector db
-`python cli.py --download --load`
-
 **Make sure to keep this container running as you launch your API and Frontend Components!**
 
 ## Testing in this container
