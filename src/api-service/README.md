@@ -40,7 +40,7 @@ Fast API gives us an interactive API documentation and exploration tool for free
 
 
 ## Testing for this container
-To run the pytests for this container, use the command `pytest tests/test_chat_utils.py` 
+To run the pytests for this container, use the command `pytest tests/test_chat_utils.py` and for integration tests, `python int_tests/test_test.py`
 
 ![CI int test](../../images/CIimage.jpg)
 Example of the integration tests running locally.
