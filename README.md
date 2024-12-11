@@ -172,11 +172,21 @@ The containers Vector DB, API Service, and Scraping have pytest and flake 8 lint
 
 
 ### Continuous Integration (CI) Workflow
-The CI process is triggered whenever code is pushed to the `milestone4` branch. Three separate workflow files handle different components of the project:
+The CI process is triggered either when 1. code is pushed to the `main` branch, or `/deploy-app` is included in the git commit message. 
 
-- `CI_api_service_push.yml`: Handles automated builds, tests, and code quality checks for the api-service component
-- `CI_scraping_push.yml`: Manages automated builds, tests, and code quality checks for the scraping component
-- `CI_vector_db_push.yml`: Controls automated builds, tests, and code quality checks for the vector-db component
+1. **`/deploy-app` is included in the git commit message** 
+To run the deploy app action, add the following to code commit comment:
+**Do this outside the container**
+* Add `/deploy-app` to the commit message to re-deploy the frontend and backend 
+
+```
+git commit -m "XXX /deploy-app"
+```
+
+2. **Unit Tests for each components, where code is pushed to the `main` branch** three separate workflow files handle different components of the project:
+	- `CI_api_service_push.yml`: Handles automated builds, tests, and code quality checks for the api-service component
+	- `CI_scraping_push.yml`: Manages automated builds, tests, and code quality checks for the scraping component
+	- `CI_vector_db_push.yml`: Controls automated builds, tests, and code quality checks for the vector-db component
 
 For each workflow files: 
 1. **Repository Checkout**:
