@@ -198,8 +198,11 @@ Due to GitHub Actions spending limits, our recent jobs appear as 'failed.' All C
 When code is pushed to the `main` branch, three separate workflow files handle different components of the project:
 
 	- `CI_api_service_push.yml`: Handles automated builds, tests, and code quality checks for the api-service component
+![Mockup](images/CICD_API_service.png)
 	- `CI_scraping_push.yml`: Manages automated builds, tests, and code quality checks for the scraping component
+![Mockup](images/CICD_Scrapping.png)
 	- `CI_vector_db_push.yml`: Controls automated builds, tests, and code quality checks for the vector-db component
+![Mockup](images/CICD_vectordb.png)
 
  ![Example CI Integration Tests](./images/CIimage.jpg)
 Evidence of the int_tests/test_test.py integration tests running locally, as they would inside `CI_api_service_push.yml`. 
