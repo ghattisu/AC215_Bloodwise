@@ -42,6 +42,9 @@ Fast API gives us an interactive API documentation and exploration tool for free
 ## Testing for this container
 To run the pytests for this container, use the command `pytest tests/test_chat_utils.py` 
 
+![CI int test](../../images/CIimage.jpg)
+Example of the integration tests running locally.
+
 Initial setup:
 - There is a mock ChatHistoryManager and a mock Chat message that are used to replicate what it would be like to retrieve previous chats and saving off a current chat using the various endpoints. The mock ChatHistoryManager has instances of previous chats to be used for testing and the mock Chat message mimics a real chat that would also test the functionalities of the API.
 
