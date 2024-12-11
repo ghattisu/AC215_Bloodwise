@@ -176,13 +176,13 @@ The CI process is triggered in either of these scenarios:
 1. The commit message includes `/deploy-app`
 2. Code is pushed to the `main` branch
 
-#### Deploying with /deploy-app ####
+#### 1. Deploying with /deploy-app ####
 To trigger the deploy app action, add `/deploy-app` to your commit message when working outside the container.
 
 1. **`/deploy-app` is included in the git commit message** 
 To run the deploy app action, add the following to code commit comment:
 **Do this outside the container**
-* Add `/deploy-app` to the commit message to re-deploy the frontend and backend 
+Add `/deploy-app` to the commit message to re-deploy the frontend and backend 
 
 ```
 git commit -m "XXX /deploy-app"
@@ -190,7 +190,12 @@ git commit -m "XXX /deploy-app"
 Below is an example of a successful GitHub Actions deployment:
 ![Mockup](images/CICD_deployment.png)
 
-2. **Unit Tests for each components, where code is pushed to the `main` branch** three separate workflow files handle different components of the project:
+
+Due to GitHub Actions spending limits, our recent jobs appear as 'failed.' All CI/CD tests pass both locally and in GitHub Actions, except for the integration tests which currently fail in GitHub Actions but pass locally.
+
+#### 2. Unit Tests and Component Workflows ####
+When code is pushed to the `main` branch, three separate workflow files handle different components of the project:
+
 	- `CI_api_service_push.yml`: Handles automated builds, tests, and code quality checks for the api-service component
 	- `CI_scraping_push.yml`: Manages automated builds, tests, and code quality checks for the scraping component
 	- `CI_vector_db_push.yml`: Controls automated builds, tests, and code quality checks for the vector-db component
