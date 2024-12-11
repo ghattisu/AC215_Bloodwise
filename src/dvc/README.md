@@ -24,6 +24,7 @@ Your folder structure should look like:
     │   ├── frontend-react
     │   ├── scraping
     │   ├── vector-db
+    │   ├── fine=tuning
     ├── .github/workflows
     ├── .flask8
     ├── .gitignore
