@@ -264,6 +264,7 @@ coverage-report/
 │   ├── frontend-react
 │   ├── scraping
 │   ├── vector-db
+│   ├── deploymnent
 ├── credentials.json
 ├── Pipfile
 ├── Pipfile.lock
