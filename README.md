@@ -176,6 +176,9 @@ The CI process is triggered in either of these scenarios:
 1. The commit message includes `/deploy-app`
 2. Code is pushed to the `main` branch
 
+![Example CI Integration Tests](./images/CIimage.jpg)
+Evidence of the int_tests/test_test.py integration tests running locally. 
+
 #### 1. Deploying with /deploy-app ####
 To trigger the deploy app action, add `/deploy-app` to your commit message when working outside the container. 
 
