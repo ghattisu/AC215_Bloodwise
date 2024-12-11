@@ -173,8 +173,8 @@ The containers Vector DB, API Service, and Scraping have pytest and flake 8 lint
 
 ### Continuous Integration (CI) Workflow
 The CI process is triggered in either of these scenarios:
-1. Code is pushed to the `main` branch
-2. The commit message includes `/deploy-app`
+1. The commit message includes `/deploy-app`
+2. Code is pushed to the `main` branch
 
 #### Deploying with /deploy-app ####
 To trigger the deploy app action, add `/deploy-app` to your commit message when working outside the container.
