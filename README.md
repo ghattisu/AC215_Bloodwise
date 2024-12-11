@@ -73,12 +73,12 @@ Sample output will look like this:
 ### Data Containers Overview
 
 Since each section is containerized, please access the readme’s of each subfolder to run each container:
-1. [Scraping](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone5/src/scraping)
-2. [Vector DB](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone5/src/vector-db)
-3. [API-Service](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone5/src/api-service)
-4. [Frontend](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone5/src/frontend-react)
-5. [Deployment](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone5/src/deployment)
-6. [DVC](https://github.com/ghattisu/AC215_Bloodwise/tree/milestone5/src/dvc)
+1. [Scraping](https://github.com/ghattisu/AC215_Bloodwise/tree/main/src/scraping)
+2. [Vector DB](https://github.com/ghattisu/AC215_Bloodwise/tree/main/src/vector-db)
+3. [API-Service](https://github.com/ghattisu/AC215_Bloodwise/tree/main/src/api-service)
+4. [Frontend](https://github.com/ghattisu/AC215_Bloodwise/tree/main/src/frontend-react)
+5. [Deployment](https://github.com/ghattisu/AC215_Bloodwise/tree/main/src/deployment)
+6. [DVC](https://github.com/ghattisu/AC215_Bloodwise/tree/main/src/dvc)
 
 
 ### Summary Code for Each Container
