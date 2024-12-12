@@ -191,8 +191,8 @@ git commit -m "XXX /deploy-app"
 Below is an example of a successful GitHub Actions deployment:
 ![Mockup](images/CICD_deployment.png)
 
-
 Due to GitHub Actions spending limits, our recent jobs appear as 'failed.' All CI/CD tests pass both locally and in GitHub Actions, except for the integration tests which currently fail in GitHub Actions but pass locally.
+![Mockup](images/git_action_error.png)
 
 #### 2. Unit Tests and Component Workflows ####
 When code is pushed to the `main` branch, three separate workflow files handle different components of the project:
