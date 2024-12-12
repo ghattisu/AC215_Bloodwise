@@ -166,16 +166,6 @@ async def get_chat_file(chat_id: str, message_id: str):
         data = df.to_dict("records")
         return data
 
-        # Determine content type
-        # content_type, _ = mimetypes.guess_type(str(file_path))
-        # if not content_type:
-        #     content_type = "application/octet-stream"
-
-        # return FileResponse(
-        #     path=file_path,
-        #     media_type=content_type
-        # )
-
     except pd.errors.EmptyDataError:
         raise HTTPException(status_code=400, detail="CSV file is empty")
     except pd.errors.ParserError:
@@ -184,59 +174,3 @@ async def get_chat_file(chat_id: str, message_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
-
-
-# @router.get("/images/{chat_id}/{message_id}.png")
-# async def get_chat_image(chat_id: str, message_id: str):
-#     """
-#     Serve an image from the chat history.
-
-#     Args:
-#         chat_id: The chat ID
-#         message_id: The message ID
-
-#     Returns:
-#         FileResponse: The image file with appropriate content type
-#     """
-#     try:
-#         # Construct the image path
-#         image_path = os.path.join(
-#             chat_manager.images_dir,
-#             chat_id,
-#             f"{message_id}.png"
-#         )
-
-#         # Verify the path exists and is within the images directory
-#         image_path = Path(image_path).resolve()
-#         images_dir = Path(chat_manager.images_dir).resolve()
-
-#         # Security check: ensure the requested file is within the images directory
-#         if not str(image_path).startswith(str(images_dir)):
-#             raise HTTPException(
-#                 status_code=403,
-#                 detail="Access denied"
-#             )
-
-#         if not image_path.exists():
-#             raise HTTPException(
-#                 status_code=404,
-#                 detail="Image not found"
-#             )
-
-#         # Determine content type
-#         content_type, _ = mimetypes.guess_type(str(image_path))
-#         if not content_type:
-#             content_type = "application/octet-stream"
-
-#         return FileResponse(
-#             path=image_path,
-#             media_type=content_type
-#         )
-
-#     except HTTPException:
-#         raise
-#     except Exception as e:
-#         raise HTTPException(
-#             status_code=500,
-#             detail=f"Error serving image: {str(e)}"
-#         )
